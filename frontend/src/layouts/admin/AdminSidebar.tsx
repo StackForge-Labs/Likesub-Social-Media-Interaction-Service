@@ -198,6 +198,13 @@ function AdminSidebar() {
         index: number;
     } | null>(null);
 
+    const [isMounted, setIsMounted] = useState(false);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
     const isActive = useCallback((path: string) => {
         if (!path) return false;
         return pathname === path;
@@ -222,6 +229,7 @@ function AdminSidebar() {
         })
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         let subMenuMatched = false;
 
@@ -274,9 +282,9 @@ function AdminSidebar() {
                         {nav.subItems ? (
                             <button
                                 onClick={() => handleSubmenuToggle(index, menuType)}
-                                className={`relative hover:bg-slate-800 flex items-center w-full gap-3 px-3 py-3 font-normal rounded-lg text-[16px]!s group text-slate-300 cursor-pointer ${openSubmenu?.type === menuType && openSubmenu?.index === index
-                                    ? "bg-slate-800 text-blue-400"
-                                    : "text-slate-300 group-hover:text-slate-400"
+                                className={`relative flex items-center w-full gap-3 px-4 py-3 font-medium rounded-xl text-[16px]! group ${openSubmenu?.type === menuType && openSubmenu?.index === index
+                                    ? "bg-[#1E40af] text-white"
+                                    : "text-slate-600 group-hover:text-slate-500 hover:bg-blue-50"
                                     } cursor-pointer ${!isExpanded && !isHovered
                                         ? "justify-center"
                                         : "justify-start"
@@ -284,8 +292,8 @@ function AdminSidebar() {
                             >
                                 <span
                                     className={`${openSubmenu?.type === menuType && openSubmenu?.index === index
-                                        ? "text-blue-400"
-                                        : "text-slate-300 group-hover:text-slate-400"
+                                        ? "text-white"
+                                        : "text-slate-600 group-hover:text-slate-500"
                                         }`}
                                 >
                                     {nav.icon}
@@ -293,8 +301,8 @@ function AdminSidebar() {
                                 {(isExpanded || isHovered) && (
                                     <span
                                         className={`${openSubmenu?.type === menuType && openSubmenu?.index === index
-                                            ? "text-blue-400"
-                                            : "text-slate-300 group-hover:text-slate-400"
+                                            ? "text-white"
+                                            : "text-slate-600 group-hover:text-slate-500"
                                             }`}
                                     >
                                         {nav.name}
@@ -304,7 +312,7 @@ function AdminSidebar() {
                                     <ChevronDownIcon
                                         className={`ml-auto w-5 h-5 transition-transform duration-200 ${openSubmenu?.type === menuType &&
                                             openSubmenu?.index === index
-                                            ? "rotate-180 text-blue-400"
+                                            ? "rotate-180 text-white"
                                             : ""
                                             }`}
                                     />
@@ -313,23 +321,23 @@ function AdminSidebar() {
                         ) : (
                             nav.path && (
                                 <Link
-                                    className={`hover:bg-slate-800! flex items-center w-full gap-3 px-3 py-3 font-normal rounded-lg text-[16px]! group text-slate-300 cursor-pointer 
+                                    className={`flex items-center w-full gap-3 px-4 py-3 font-medium rounded-xl text-[16px] group
                                         ${isActive(nav.path)
-                                            ? "bg-slate-800"
-                                            : ""
+                                            ? "bg-[#1E40AF]!"
+                                            : "hover:bg-blue-50!"
                                         }
                                     `}
                                     href={nav.path}
                                 >
                                     <span className={`${isActive(nav.path)
-                                        ? "text-blue-400"
-                                        : "text-slate-300 group-hover:text-slate-400"
+                                        ? "text-white"
+                                        : "text-slate-600 group-hover:text-slate-500"
                                         }`}>
                                         {nav.icon}
                                     </span>
                                     <span className={`${isActive(nav.path)
-                                        ? "text-blue-400"
-                                        : "text-slate-300 group-hover:text-slate-400"
+                                        ? "text-white"
+                                        : "text-slate-600 group-hover:text-slate-500"
                                         }`}>
                                         {nav.name}
                                     </span>
@@ -351,18 +359,16 @@ function AdminSidebar() {
                                             : "0px",
                                 }}
                             >
-                                <ul className="mt-2 space-y-1 text-left ml-6">
+                                <ul className="mt-2 space-y-1 text-left ml-11">
                                     {nav.subItems.map(subItem => (
                                         <li key={subItem.name}>
                                             <Link
-                                                className={`hover:bg-slate-800! flex items-center w-full gap-2 px-3 py-2 h-9! font-medium rounded-lg text-[14px]! group text-slate-300 
-                                                    ${isActive(subItem.path)
-                                                        ? "bg-slate-800 text-blue-400!"
-                                                        : "text-slate-300 group-hover:text-slate-400"
+                                                className={`flex items-center w-full gap-3 px-6 py-2.5 font-normal rounded-lg text-[14px] group text-slate-300 ${isActive(subItem.path)
+                                                    ? "text-slate-800"
+                                                    : "text-slate-600 group-hover:text-slate-500 hover:bg-blue-50!"
                                                     }`}
                                                 href={subItem.path}
                                             >
-                                                {subItem.icon}
                                                 {subItem.name}
                                             </Link>
 
@@ -379,7 +385,7 @@ function AdminSidebar() {
     }
 
     return (
-        <aside className="sticky mt-1 lg:mt-0 flex flex-col top-0 px-5 left-0 w-72! bg-[#0f172a] text-gray-900 border-r border-gray-200 h-screen transition-all duration-300 ease-in-out z-50">
+        <aside className="sticky mt-1 lg:mt-0 flex flex-col top-0 px-5 left-0 w-72 bg-white border-r border-gray-200 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50" suppressHydrationWarning>
             {/* Logo */}
             <Link href={"/"} className="h-18 py-4.5 px-6 mb-4">
                 <Image
@@ -392,32 +398,42 @@ function AdminSidebar() {
             </Link>
 
             {/* Nav Item */}
-            <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
-                <nav className="mb-6">
-                    <div className="flex flex-col gap-4">
-                        {/* Menu Item */}
-                        <h2 className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}>
-                            MAIN
-                        </h2>
-                        {/* render main items */}
-                        {renderMenuItems(adminMenuItems, "main")}
+            {!isMounted ? (
+                <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+                    <nav className="mb-6">
+                        <div className="flex flex-col gap-4 pt-6">
+                            {/* Placeholder during SSR */}
+                        </div>
+                    </nav>
+                </div>
+            ) : (
+                <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+                    <nav className="mb-6">
+                        <div className="flex flex-col gap-4 pt-6">
+                            {/* Menu Item */}
+                            <h2 className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}>
+                                MAIN
+                            </h2>
+                            {/* render main items */}
+                            {renderMenuItems(adminMenuItems, "main")}
 
-                        {/* Service Item */}
-                        <h2 className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}>
-                            Dịch vụ
-                        </h2>
-                        {/* render main items */}
-                        {renderMenuItems(adminServiceItems, "services")}
+                            {/* Service Item */}
+                            <h2 className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}>
+                                Dịch vụ
+                            </h2>
+                            {/* render main items */}
+                            {renderMenuItems(adminServiceItems, "services")}
 
-                        {/* Managements Item */}
-                        <h2 className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}>
-                            Quản lý
-                        </h2>
-                        {/* render main items */}
-                        {renderMenuItems(adminManagementsItems, "management")}
-                    </div>
-                </nav>
-            </div>
+                            {/* Managements Item */}
+                            <h2 className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}>
+                                Quản lý
+                            </h2>
+                            {/* render main items */}
+                            {renderMenuItems(adminManagementsItems, "management")}
+                        </div>
+                    </nav>
+                </div>
+            )}
         </aside>
     )
 }

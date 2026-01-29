@@ -1,9 +1,10 @@
 "use client";
 
+import Link from "next/link";
+
 import { useSidebar } from "@/contexts/SidebarContext";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
 
 import {
     ShoppingCart,
@@ -157,6 +158,15 @@ function UserSidebar() {
         index: number;
     } | null>(null);
 
+    const [isMounted, setIsMounted] = useState(false);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
+
+
     const isActive = useCallback(
         (path: string) => {
             if (!path) return false;
@@ -186,6 +196,7 @@ function UserSidebar() {
         });
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         let subMenuMatched = false;
 
@@ -241,10 +252,10 @@ function UserSidebar() {
                                 onClick={() =>
                                     handleSubmenuToggle(index, menuType)
                                 }
-                                className={`relative hover:bg-slate-800 flex items-center w-full gap-3 px-3 py-2 font-normal rounded-lg text-[14px] group text-slate-300 ${openSubmenu?.type === menuType &&
+                                className={`relative flex items-center w-full gap-3 px-4 py-3 font-medium rounded-xl text-[16px]! group ${openSubmenu?.type === menuType &&
                                     openSubmenu?.index === index
-                                    ? "bg-slate-800 text-blue-400"
-                                    : "text-slate-300 group-hover:text-slate-400"
+                                    ? "bg-[#1E40af] text-white"
+                                    : "text-slate-600 group-hover:text-slate-500 hover:bg-blue-50"
                                     } cursor-pointer ${!isExpanded && !isHovered
                                         ? "justify-center"
                                         : "justify-start"
@@ -253,8 +264,8 @@ function UserSidebar() {
                                 <span
                                     className={`${openSubmenu?.type === menuType &&
                                         openSubmenu?.index === index
-                                        ? "text-blue-400"
-                                        : "text-slate-300 group-hover:text-slate-400"
+                                        ? "text-white"
+                                        : "text-slate-600 group-hover:text-slate-500"
                                         }`}
                                 >
                                     {nav.icon}
@@ -263,8 +274,8 @@ function UserSidebar() {
                                     <span
                                         className={`${openSubmenu?.type === menuType &&
                                             openSubmenu?.index === index
-                                            ? "text-blue-400"
-                                            : "text-slate-300 group-hover:text-slate-400"
+                                            ? "text-white"
+                                            : "text-slate-600 group-hover:text-slate-500"
                                             }`}
                                     >
                                         {nav.name}
@@ -274,7 +285,7 @@ function UserSidebar() {
                                     <ChevronDownIcon
                                         className={`ml-auto w-5 h-5 transition-transform duration-200 ${openSubmenu?.type === menuType &&
                                             openSubmenu?.index === index
-                                            ? "rotate-180 text-blue-400"
+                                            ? "rotate-180 text-white"
                                             : ""
                                             }`}
                                     />
@@ -283,26 +294,26 @@ function UserSidebar() {
                         ) : (
                             nav.path && (
                                 <Link
-                                    className={`hover:bg-slate-800 flex items-center w-full gap-3 px-3 py-3 font-normal rounded-lg text-[16px] group text-slate-300 
+                                    className={`flex items-center w-full gap-3 px-4 py-3 font-medium rounded-xl text-[16px] group
                                         ${isActive(nav.path)
-                                            ? "bg-slate-800"
-                                            : ""
+                                            ? "bg-[#1E40AF]!"
+                                            : "hover:bg-blue-50!"
                                         }
                                     `}
                                     href={nav.path}
                                 >
                                     <span
                                         className={`${isActive(nav.path)
-                                            ? "text-blue-400"
-                                            : "text-slate-300 group-hover:text-slate-400"
+                                            ? "text-white"
+                                            : "text-slate-600 group-hover:text-slate-500"
                                             }`}
                                     >
                                         {nav.icon}
                                     </span>
                                     <span
                                         className={`${isActive(nav.path)
-                                            ? "text-blue-400"
-                                            : "text-slate-300 group-hover:text-slate-400"
+                                            ? "text-white"
+                                            : "text-slate-600 group-hover:text-slate-500"
                                             }`}
                                     >
                                         {nav.name}
@@ -335,9 +346,9 @@ function UserSidebar() {
                                     {nav.subItems.map((subItem) => (
                                         <li key={subItem.name}>
                                             <Link
-                                                className={`hover:bg-slate-800 flex items-center w-full gap-3 px-3 py-2 font-normal rounded-lg text-[14px] group text-slate-300 ${isActive(subItem.path)
-                                                    ? "text-blue-400"
-                                                    : "text-slate-300 group-hover:text-slate-400"
+                                                className={`flex items-center w-full gap-3 px-6 py-2.5 font-normal rounded-lg text-[14px] group text-slate-300 ${isActive(subItem.path)
+                                                    ? "text-slate-800"
+                                                    : "text-slate-600 group-hover:text-slate-500 hover:bg-blue-50!"
                                                     }`}
                                                 href={subItem.path}
                                             >
@@ -357,7 +368,7 @@ function UserSidebar() {
     };
 
     return (
-        <aside className="sticky mt-1 lg:mt-0 flex flex-col top-0 px-5 left-0 w-72 bg-[#0f172a] text-gray-900 h-screen transition-all duration-300 ease-in-out z-50">
+        <aside className="sticky mt-1 lg:mt-0 flex flex-col top-0 px-5 left-0 w-72 bg-white border-r border-gray-200 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50" suppressHydrationWarning>
             {/* Logo */}
             <Link href={"/"} className="h-18 py-4.5 px-6 mb-4">
                 <Image
@@ -370,38 +381,48 @@ function UserSidebar() {
             </Link>
 
             {/* Nav Item */}
-            <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
-                <nav className="mb-6">
-                    <div className="flex flex-col gap-4">
-                        {/* Menu Item */}
-                        <h2
-                            className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}
-                        >
-                            MENU
-                        </h2>
-                        {/* render menu items */}
-                        {renderMenuItems(navItems, "menu")}
+            {!isMounted ? (
+                <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+                    <nav className="mb-6">
+                        <div className="flex flex-col gap-4 pt-6">
+                            {/* Placeholder during SSR */}
+                        </div>
+                    </nav>
+                </div>
+            ) : (
+                <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
+                    <nav className="mb-6">
+                        <div className="flex flex-col gap-4 pt-6">
+                            {/* Menu Item */}
+                            <h2
+                                className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}
+                            >
+                                Quản lý chung
+                            </h2>
+                            {/* render menu items */}
+                            {renderMenuItems(navItems, "menu")}
 
-                        {/* Others Item */}
-                        <h2
-                            className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}
-                        >
-                            Khác
-                        </h2>
-                        {/* render menu items */}
-                        {renderMenuItems(othersItems, "others")}
+                            {/* Services Item */}
+                            <h2
+                                className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}
+                            >
+                                Dịch vụ
+                            </h2>
+                            {/* render menu items */}
+                            {renderMenuItems(servicesItems, "others")}
 
-                        {/* Services Item */}
-                        <h2
-                            className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}
-                        >
-                            Dịch vụ
-                        </h2>
-                        {/* render menu items */}
-                        {renderMenuItems(servicesItems, "others")}
-                    </div>
-                </nav>
-            </div>
+                            {/* Others Item */}
+                            <h2
+                                className={`text-xs uppercase flex leading-5 text-slate-400 font-medium`}
+                            >
+                                Khác
+                            </h2>
+                            {/* render menu items */}
+                            {renderMenuItems(othersItems, "others")}
+                        </div>
+                    </nav>
+                </div>
+            )}
         </aside>
     );
 }

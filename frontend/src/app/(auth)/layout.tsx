@@ -31,7 +31,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                     <div className="flex flex-col h-full justify-center pb-22 pt-8">
                         <div className="flex flex-col gap-6 px-29 pt-6">
                             <h2 className="text-4xl font-extrabold text-white text-center leading-tight">
-                                Tăng trưởng mạng xã hội dễ dàng
+                                Tăng trưởng mạng xã hội<br />dễ dàng
                             </h2>
                             <p className="text-gray-400 text-[13px] leading-relaxed text-center">
                                 Dịch vụ seeding uy tín – tăng tương tác chất lượng, tạo độ tin cậy và thúc đẩy thương hiệu phát triển bền vững
