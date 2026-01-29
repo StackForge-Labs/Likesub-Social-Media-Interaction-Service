@@ -11,7 +11,7 @@ export default function HomeStatisticsCards({
 }: HomeStatisticsCardsProps) {
     return (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="bg-white rounded shadow-sm p-4 border border-slate-200">
+            <div className="bg-white rounded shadow-sm p-4 border">
                 <div className="flex items-start justify-between">
                     <div>
                         <p className="text-sm text-gray-500 font-medium">
@@ -27,7 +27,7 @@ export default function HomeStatisticsCards({
                 </div>
             </div>
 
-            <div className="bg-white rounded shadow-sm p-4 border border-slate-200">
+            <div className="bg-white rounded shadow-sm p-4 border">
                 <div className="flex items-start justify-between">
                     <div>
                         <p className="text-sm text-gray-500 font-medium">
@@ -43,7 +43,7 @@ export default function HomeStatisticsCards({
                 </div>
             </div>
 
-            <div className="bg-white rounded shadow-sm p-4 border border-slate-200">
+            <div className="bg-white rounded shadow-sm p-4 border">
                 <div className="flex items-start justify-between">
                     <div>
                         <p className="text-sm text-gray-500 font-medium">
