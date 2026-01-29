@@ -158,7 +158,12 @@ function UserSidebar() {
         index: number;
     } | null>(null);
 
-    const [isMounted, setIsMounted] = useState(typeof window !== 'undefined');
+    const [isMounted, setIsMounted] = useState(false);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
 
 
@@ -191,6 +196,7 @@ function UserSidebar() {
         });
     };
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         let subMenuMatched = false;
 

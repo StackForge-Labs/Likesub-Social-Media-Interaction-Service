@@ -198,7 +198,12 @@ function AdminSidebar() {
         index: number;
     } | null>(null);
 
-    const [isMounted, setIsMounted] = useState(typeof window !== 'undefined');
+    const [isMounted, setIsMounted] = useState(false);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const isActive = useCallback((path: string) => {
         if (!path) return false;
@@ -224,6 +229,7 @@ function AdminSidebar() {
         })
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         let subMenuMatched = false;
 
