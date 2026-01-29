@@ -27,7 +27,7 @@ function ClientLayout({
                 <UserHeader />
 
                 {/* Main Content */}
-                <div className="flex-1 bg-slate-100 min-h-screen! overflow-y-auto min-h-0">
+                <div className="flex-1 bg-slate-100 min-h-screen! overflow-y-auto">
                     {children}
                 </div>
 
