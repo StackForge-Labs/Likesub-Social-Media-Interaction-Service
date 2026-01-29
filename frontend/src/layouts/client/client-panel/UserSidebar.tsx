@@ -158,11 +158,9 @@ function UserSidebar() {
         index: number;
     } | null>(null);
 
-    const [isMounted, setIsMounted] = useState(false);
+    const [isMounted, setIsMounted] = useState(typeof window !== 'undefined');
 
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
+
 
     const isActive = useCallback(
         (path: string) => {

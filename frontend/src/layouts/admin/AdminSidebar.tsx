@@ -198,6 +198,8 @@ function AdminSidebar() {
         index: number;
     } | null>(null);
 
+    const [isMounted, setIsMounted] = useState(typeof window !== 'undefined');
+
     const isActive = useCallback((path: string) => {
         if (!path) return false;
         return pathname === path;
@@ -375,12 +377,6 @@ function AdminSidebar() {
             </ul>
         )
     }
-
-    const [isMounted, setIsMounted] = useState(false);
-
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
 
     return (
         <aside className="sticky mt-1 lg:mt-0 flex flex-col top-0 px-5 left-0 w-72 bg-white border-r border-gray-200 text-gray-900 h-screen transition-all duration-300 ease-in-out z-50" suppressHydrationWarning>
