@@ -58,7 +58,7 @@ export default function Hero() {
                   }
                 }
                 .animate-scroll {
-                  animation: scroll 14s linear infinite;
+                  animation: scroll 24s linear infinite;
                 }
                 .animate-scroll:hover {
                   animation-play-state: paused;
