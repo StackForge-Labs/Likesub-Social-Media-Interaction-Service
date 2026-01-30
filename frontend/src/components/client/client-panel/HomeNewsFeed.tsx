@@ -56,7 +56,7 @@ const MOCK_BLOG_POSTS: BlogPost[] = [
         },
         title: "Bí quyết tăng tương tác Facebook Fanpage lên 500% trong 30 ngày",
         description:
-            "Chia sẻ chiến lược đã được kiểm chứng giúp hàng trăm khách hàng tăng trưởng fanpage vượt bậc. Kết hợp dịch vụ tăng like, comment và share từ LikeSub với content chất lượng, bạn sẽ thấy sự thay đổi đáng kinh ngạc chỉ sau 1 tháng...",
+            "Chia sẻ chiến lược đã được kiểm chứng giúp hàng trăm khách hàng tăng trưởng fanpage vượt bậc. Kết hợp dịch vụ tăng like, comment và share từ LikeSub với content chất lượng, bạn sẽ thấy sự thay đổi đáng kinh ngạc chỉ sau 1 tháng. Đặc biệt, chúng tôi có hướng dẫn chi tiết từng bước để bạn có thể áp dụng ngay hôm nay...",
         category: "Hướng dẫn",
         createdAt: "1 ngày trước",
         likes: 512,
@@ -91,7 +91,7 @@ const MOCK_BLOG_POSTS: BlogPost[] = [
         },
         title: "⚡ Giảm giá 30% toàn bộ dịch vụ YouTube - Chỉ 3 ngày duy nhất!",
         description:
-            "Chương trình khuyến mãi đặc biệt: Giảm 30% cho tất cả dịch vụ YouTube (Subscribe, View, Like). Áp dụng từ 20/01 đến 23/01/2026. Đây là cơ hội tuyệt vời để phát triển kênh YouTube của bạn với chi phí thấp nhất. Số lượng có hạn, nhanh tay đặt hàng ngay!",
+            "Chương trình khuyến mãi đặc biệt: Giảm 30% cho tất cả dịch vụ YouTube (Subscribe, View, Like). Áp dụng từ 20/01 đến 23/01/2026. Đây là cơ hội tuyệt vời để phát triển kênh YouTube của bạn với chi phí thấp nhất. Số lượng có hạn, nhanh tay đặt hàng ngay! Đừng bỏ lỡ cơ hội vàng này để đưa kênh của bạn lên tầm cao mới.",
         category: "Khuyến mãi",
         createdAt: "5 giờ trước",
         likes: 892,
@@ -127,7 +127,7 @@ const MOCK_BLOG_POSTS: BlogPost[] = [
         },
         title: "🎊 Cộng đồng LikeSub chính thức đạt 100.000 thành viên!",
         description:
-            "Cảm ơn sự tin tưởng và đồng hành của 100.000+ khách hàng đã sử dụng dịch vụ của LikeSub. Để tri ân, chúng tôi tặng 50.000đ vào tài khoản cho 1000 khách hàng may mắn. Đã xử lý hơn 5 triệu đơn hàng với tỷ lệ hoàn thành 99.8%. Cảm ơn các bạn rất nhiều!",
+            "Cảm ơn sự tin tưởng và đồng hành của 100.000+ khách hàng đã sử dụng dịch vụ của LikeSub. Để tri ân, chúng tôi tặng 50.000đ vào tài khoản cho 1000 khách hàng may mắn. Đã xử lý hơn 5 triệu đơn hàng với tỷ lệ hoàn thành 99.8%. Cảm ơn các bạn rất nhiều! Hãy tiếp tục đồng hành cùng chúng tôi trong hành trình phát triển sắp tới...",
         category: "Cộng đồng",
         createdAt: "2 tuần trước",
         likes: 1247,
@@ -268,7 +268,7 @@ export default function HomeNewsFeed() {
                                 <h3 className="text-base font-bold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors cursor-pointer">
                                     {post.title}
                                 </h3>
-                                <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">
+                                <p className="text-sm text-gray-600 leading-relaxed">
                                     {post.description}
                                 </p>
                                 {post.image && (

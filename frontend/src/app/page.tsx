@@ -4,7 +4,6 @@ import Clients from "@/components/client/landing-page/Clients";
 import Faq from "@/components/client/landing-page/Faq";
 import Feedback from "@/components/client/landing-page/Feedback";
 import Hero from "@/components/client/landing-page/Hero";
-import Services from "@/components/client/landing-page/Services";
 import Footer from "@/layouts/client/landing-page/Footer";
 import Header from "@/layouts/client/landing-page/Header";
 

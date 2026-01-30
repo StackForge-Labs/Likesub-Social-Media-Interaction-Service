@@ -22,7 +22,7 @@ function ServicesPricingCardModern() {
                 <div className="mx-auto max-w-lg flex items-center justify-center mb-7">
                     <span className="font-bold text-3xl text-center text-gray-800">
                         Các gói dịch vụ thiết kế riêng phù hợp với nhu
-                        cầu độc đáo!
+                        cầu của bạn!
                     </span>
                 </div>
 
@@ -44,7 +44,7 @@ function ServicesPricingCardModern() {
                             setIsAnnually(false);
                         }}
                     >
-                        Monthly
+                        Tháng
                     </button>
                     <button
                         className={`flex h-11 w-30 items-center justify-center text-sm font-medium text-gray-500 hover:text-gray-800 cursor-pointer ${isActiveOption === "annually"
@@ -56,7 +56,7 @@ function ServicesPricingCardModern() {
                             setIsAnnually(true);
                         }}
                     >
-                        Annually
+                        Năm
                     </button>
                 </div>
 
@@ -69,7 +69,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-start justify-between">
                                 <div className="flex flex-col gap-2">
                                     <span className="font-bold text-lg">
-                                        Personal
+                                        Cơ bản
                                     </span>
                                     <div>
                                         <span className="font-bold text-3xl">
@@ -86,7 +86,7 @@ function ServicesPricingCardModern() {
                             </div>
                             <div className="mt-1">
                                 <span className="text-xs text-gray-600">
-                                    For solo designers & freelancers
+                                    Dành cho cá nhân và người mới bắt đầu
                                 </span>
                             </div>
                         </div>
@@ -100,7 +100,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    5 website
+                                    5 dịch vụ
                                 </span>
                             </div>
 
@@ -108,7 +108,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    500 MB Storage
+                                    Hỗ trợ cơ bản
                                 </span>
                             </div>
 
@@ -116,7 +116,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    Unlimited Sub-Domain
+                                    Giá tiêu chuẩn
                                 </span>
                             </div>
 
@@ -124,7 +124,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    3 Custom Domain
+                                    Thanh toán linh hoạt
                                 </span>
                             </div>
 
@@ -132,7 +132,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <X className="text-gray-400 w-4 h-4" />
                                 <span className="font-semibold text-xs text-gray-400">
-                                    Free SSL Certificate
+                                    Giảm giá đặc biệt
                                 </span>
                             </div>
 
@@ -140,14 +140,14 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <X className="text-gray-400 w-4 h-4" />
                                 <span className="font-semibold text-xs text-gray-400">
-                                    Unlimited Traffic
+                                    Hỗ trợ VIP 24/7
                                 </span>
                             </div>
                         </div>
 
                         {/* Choose Button */}
                         <button className="flex w-full items-center justify-center rounded-lg bg-[#0f172a] p-3.5 text-xs font-medium text-white shadow-sm transition-colors duration-300 hover:bg-blue-600 cursor-pointer">
-                            Choose Starter
+                            Chọn gói này
                         </button>
                     </div>
 
@@ -158,7 +158,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-start justify-between">
                                 <div className="flex flex-col gap-2">
                                     <span className="font-bold text-lg">
-                                        Professional
+                                        Chuyên nghiệp
                                     </span>
                                     <div>
                                         <span className="font-bold text-3xl">
@@ -175,7 +175,7 @@ function ServicesPricingCardModern() {
                             </div>
                             <div className="mt-1">
                                 <span className="text-xs text-gray-600">
-                                    For working on commercial projects
+                                    Dành cho doanh nghiệp và nhóm
                                 </span>
                             </div>
                         </div>
@@ -189,7 +189,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    10 website
+                                    10 dịch vụ
                                 </span>
                             </div>
 
@@ -197,7 +197,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    1GB Storage
+                                    Hỗ trợ ưu tiên
                                 </span>
                             </div>
 
@@ -205,7 +205,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    Unlimited Sub-Domain
+                                    Giảm giá 10%
                                 </span>
                             </div>
 
@@ -213,7 +213,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    5 Custom Domain
+                                    Thanh toán linh hoạt
                                 </span>
                             </div>
 
@@ -221,7 +221,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    Free SSL Certificate
+                                    Báo cáo chi tiết
                                 </span>
                             </div>
 
@@ -229,14 +229,14 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <X className="text-gray-400 w-4 h-4" />
                                 <span className="font-semibold text-xs text-gray-400">
-                                    Unlimited Traffic
+                                    Hỗ trợ VIP 24/7
                                 </span>
                             </div>
                         </div>
 
                         {/* Choose Button */}
                         <button className="flex w-full items-center justify-center rounded-lg bg-blue-600 p-3.5 text-xs font-medium text-white shadow-sm transition-colors duration-300 hover:bg-blue-800 cursor-pointer">
-                            Choose This Plan
+                            Chọn gói này
                         </button>
                     </div>
 
@@ -247,7 +247,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-start justify-between">
                                 <div className="flex flex-col gap-2">
                                     <span className="font-bold text-lg">
-                                        Enterprise
+                                        Doanh nghiệp
                                     </span>
                                     <div>
                                         <span className="font-bold text-3xl">
@@ -264,7 +264,7 @@ function ServicesPricingCardModern() {
                             </div>
                             <div className="mt-1">
                                 <span className="text-xs text-gray-600">
-                                    For teams larger than 5 members
+                                    Dành cho doanh nghiệp lớn
                                 </span>
                             </div>
                         </div>
@@ -278,7 +278,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    15 website
+                                    Không giới hạn dịch vụ
                                 </span>
                             </div>
 
@@ -286,7 +286,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    10GB Storage
+                                    Hỗ trợ VIP 24/7
                                 </span>
                             </div>
 
@@ -294,7 +294,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    Unlimited Sub-Domain
+                                    Giảm giá 20%
                                 </span>
                             </div>
 
@@ -302,7 +302,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    10 Custom Domain
+                                    Thanh toán linh hoạt
                                 </span>
                             </div>
 
@@ -310,7 +310,7 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    Free SSL Certificate
+                                    Báo cáo chi tiết
                                 </span>
                             </div>
 
@@ -318,14 +318,14 @@ function ServicesPricingCardModern() {
                             <div className="flex items-center gap-2">
                                 <Check className="text-green-500 w-4 h-4" />
                                 <span className="font-semibold text-xs text-slate-600">
-                                    Unlimited Traffic
+                                    Quản lý chuyên biệt
                                 </span>
                             </div>
                         </div>
 
                         {/* Choose Button */}
                         <button className="flex w-full items-center justify-center rounded-lg bg-[#0f172a] p-3.5 text-xs font-medium text-white shadow-sm transition-colors duration-300 hover:bg-blue-600 cursor-pointer">
-                            Choose Starter
+                            Chọn gói này
                         </button>
                     </div>
                 </div>
