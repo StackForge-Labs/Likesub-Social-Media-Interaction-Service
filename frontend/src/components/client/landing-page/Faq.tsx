@@ -7,29 +7,29 @@ import { useState } from "react";
 export default function Faq() {
   const features = [
     {
-      title: "SMM panels - what are they?",
+      title: "Likesub là gì?",
       description:
-        "Panels are platforms to manage your social media growth and engagement efficiently.",
+        "Likesub là nền tảng tăng tương tác mạng xã hội tự động, giúp bạn tăng Like, Follow, View, Comment một cách nhanh chóng và hiệu quả.",
     },
     {
-      title: "What SMM services can I find on this panel?",
+      title: "Likesub hỗ trợ những nền tảng nào?",
       description:
-        "You can find services for Instagram, Twitter, Facebook, YouTube, TikTok and more.",
+        "Chúng tôi hỗ trợ đầy đủ các nền tảng: Facebook, Instagram, TikTok, YouTube, Twitter và nhiều mạng xã hội khác.",
     },
     {
-      title: "Are SMM services on your panel safe to buy?",
+      title: "Dịch vụ có an toàn không?",
       description:
-        "Yes, all our services are safe and verified by our quality team.",
+        "Hoàn toàn an toàn! Tất cả dịch vụ đều được kiểm duyệt kỹ lượng, đảm bảo tài khoản của bạn không bị ảnh hưởng.",
     },
     {
-      title: "How does a mass order work?",
+      title: "Đơn hàng hàng loạt hoạt động như thế nào?",
       description:
-        "Mass orders allow you to boost multiple accounts simultaneously with our bulk system.",
+        "Bạn có thể tăng tương tác cho nhiều bài viết hoặc tài khoản cùng lúc với hệ thống đặt hàng hàng loạt của chúng tôi.",
     },
     {
-      title: "What does Drip-feed mean?",
+      title: "Chế độ Drip-feed là gì?",
       description:
-        "Drip-feed spreads your engagement gradually to look more natural and organic.",
+        "Drip-feed giúp tăng tương tác từ từ theo thời gian, tạo sự tự nhiên và tránh bị phát hiện là spam.",
     },
   ];
 
@@ -42,14 +42,14 @@ export default function Faq() {
           {/* Left: Illustration */}
           <div className="flex flex-col h-full gap-2.5 max-w-xl">
             <p className="text-4xl font-extrabold">
-              Những câu hỏi thường gặp
+              Câu hỏi thường gặp
             </p>
             <div className="space-y-0.5">
               <p>
-                Không tìm thấy câu trả lời bạn đang tìm kiếm?
+                Không tìm thấy câu trả lời bạn cần?
               </p>
               <p>
-                Hãy xem trang Câu hỏi thường gặp của chúng tôi để biết thêm thông tin.
+                Liên hệ với chúng tôi để được hỗ trợ tư vấn chi tiết hơn.
               </p>
             </div>
           </div>

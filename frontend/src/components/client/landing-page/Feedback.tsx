@@ -10,40 +10,40 @@ import Image from "next/image";
 export default function Feedback() {
   const feedbacks = [
     {
-      name: "Jason Statham",
-      role: "Project Manager",
+      name: "Nguyễn Văn A",
+      role: "Chủ shop online",
       avatar: "https://randomuser.me/api/portraits/men/11.jpg",
-      text: "Quis ipsum suspendisse ultrices gravida. Risus top commodo viverra maecenas accumsan lacus vel facilisis ultrices gravida.",
+      text: "Dịch vụ tuyệt vời! Tương tác tăng nhanh chóng, giúp shop mình có nhiều đơn hàng hơn. Giá cả hợp lý, hỗ trợ nhiệt tình.",
     },
     {
-      name: "Jason Roy",
-      role: "Project Manager",
-      avatar: "https://randomuser.me/api/portraits/men/12.jpg",
-      text: "Quis ipsum suspendisse ultrices gravida. Risus top commodo viverra maecenas accumsan lacus vel facilisis ultrices gravida.",
-    },
-    {
-      name: "Sarah Taylor",
-      role: "Web Developer",
-      avatar: "https://randomuser.me/api/portraits/women/12.jpg",
-      text: "Quis ipsum suspendisse ultrices gravida. Risus top commodo viverra maecenas accumsan lacus vel facilisis ultrices gravida.",
-    },
-    {
-      name: "Emily Clark",
-      role: "UI Designer",
-      avatar: "https://randomuser.me/api/portraits/women/13.jpg",
-      text: "Suspendisse potenti. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-    },
-    {
-      name: "Michael Lee",
-      role: "Marketing Lead",
-      avatar: "https://randomuser.me/api/portraits/men/13.jpg",
-      text: "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae.",
-    },
-    {
-      name: "Anna Nguyen",
+      name: "Trần Thị B",
       role: "Content Creator",
+      avatar: "https://randomuser.me/api/portraits/women/12.jpg",
+      text: "Mình đã sử dụng Likesub được 3 tháng, kênh YouTube tăng trưởng vượt bậc. View và sub tăng đều đặn, rất tự nhiên.",
+    },
+    {
+      name: "Lê Minh C",
+      role: "Influencer",
+      avatar: "https://randomuser.me/api/portraits/men/12.jpg",
+      text: "Dịch vụ uy tín, giao dịch nhanh chóng. Trang Facebook của mình đã tăng từ 5k lên 50k follower chỉ trong 2 tháng.",
+    },
+    {
+      name: "Phạm Thu D",
+      role: "Marketer",
+      avatar: "https://randomuser.me/api/portraits/women/13.jpg",
+      text: "Hệ thống dễ sử dụng, đa dạng dịch vụ. Đặc biệt là tính năng Drip-feed giúp tăng tương tác rất tự nhiên.",
+    },
+    {
+      name: "Hoàng Văn E",
+      role: "Chủ doanh nghiệp",
+      avatar: "https://randomuser.me/api/portraits/men/13.jpg",
+      text: "Giá cả cạnh tranh, chất lượng tốt. Team support nhiệt tình, giải đáp thắc mắc nhanh chóng. Rất hài lòng!",
+    },
+    {
+      name: "Võ Thị F",
+      role: "Blogger",
       avatar: "https://randomuser.me/api/portraits/women/14.jpg",
-      text: "Curabitur non nulla sit amet nisl tempus convallis quis ac lectus. Nulla porttitor accumsan tincidunt.",
+      text: "Likesub giúp mình tiết kiệm rất nhiều thời gian và công sức. Tương tác tăng đều, giúp bài viết lên top dễ dàng.",
     },
   ];
 
@@ -51,15 +51,14 @@ export default function Feedback() {
     <section className="pt-18 px-4 bg-white">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-4xl font-semibold text-center text-gray-700 mb-6">
-          User Ratings Are A Confirmation
+          Khách hàng nói gì về
           <br />
-          Of Our Quality
+          Likesub?
         </h2>
         <p className="text-center text-sm text-gray-600 mb-14 max-w-2xl mx-auto">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Quis ipsum
-          suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan
-          lacus vel facilisis.
+          Hàng nghìn khách hàng đã tin tưởng và sử dụng dịch vụ của chúng tôi.
+          Đọc những đánh giá chân thực từ khách hàng để hiểu rõ hơn về chất lượng
+          dịch vụ mà Likesub mang lại.
         </p>
         <Swiper
           modules={[Pagination, Autoplay]}
