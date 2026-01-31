@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "user-service", "user-servic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "social-service", "social-service\social-service.csproj", "{7F180A74-9E16-4CF2-AD69-0EC97DCAC769}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wallet-service", "wallet-service\wallet-service.csproj", "{F250E2A3-D385-465A-B4DE-A5C8F1DCE694}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{7F180A74-9E16-4CF2-AD69-0EC97DCAC769}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F180A74-9E16-4CF2-AD69-0EC97DCAC769}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F180A74-9E16-4CF2-AD69-0EC97DCAC769}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F250E2A3-D385-465A-B4DE-A5C8F1DCE694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F250E2A3-D385-465A-B4DE-A5C8F1DCE694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F250E2A3-D385-465A-B4DE-A5C8F1DCE694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F250E2A3-D385-465A-B4DE-A5C8F1DCE694}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
