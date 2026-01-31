@@ -25,7 +25,7 @@ export default function Footer() {
             {/* End Col */}
             <div className="lg:mx-auto text-left">
               <h4 className="text-2xl text-gray-900 font-extrabold mb-7">
-                Pagedone
+                Likesub
               </h4>
               <ul className="transition-all duration-500">
                 <li className="mb-6">
@@ -33,7 +33,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    Home
+                    Trang chủ
                   </a>
                 </li>
                 <li className="mb-6">
@@ -41,7 +41,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    About
+                    Giới thiệu
                   </a>
                 </li>
                 <li>
@@ -49,7 +49,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    Pricing
+                    Bảng giá
                   </a>
                 </li>
               </ul>
@@ -58,7 +58,7 @@ export default function Footer() {
             {/* End Col */}
             <div className="lg:mx-auto text-left">
               <h4 className="text-2xl text-gray-900 font-extrabold mb-7">
-                Products
+                Dịch vụ
               </h4>
               <ul className="transition-all duration-500">
                 <li className="mb-6">
@@ -66,7 +66,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    Figma UI System
+                    Tăng Like Facebook
                   </a>
                 </li>
                 <li className="mb-6">
@@ -74,7 +74,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    Icons Assets
+                    Tăng Follow Instagram
                   </a>
                 </li>
                 <li>
@@ -82,7 +82,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    Responsive Blocks
+                    Tăng View TikTok
                   </a>
                 </li>
               </ul>
@@ -91,7 +91,7 @@ export default function Footer() {
             {/* Support Col */}
             <div className="lg:mx-auto text-left">
               <h4 className="text-2xl text-gray-900 font-extrabold mb-7">
-                Support
+                Hỗ trợ
               </h4>
               <ul className="transition-all duration-500">
                 <li className="mb-6">
@@ -99,7 +99,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    Customer Support
+                    Hỗ trợ khách hàng
                   </a>
                 </li>
                 <li className="mb-6">
@@ -107,7 +107,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    Terms & Conditions
+                    Điều khoản sử dụng
                   </a>
                 </li>
                 <li>
@@ -115,7 +115,7 @@ export default function Footer() {
                     href="javascript:void(0)"
                     className="text-gray-800 font-medium hover:underline cursor-pointer hover:text-gray-800 transition-colors"
                   >
-                    Privacy Policy
+                    Chính sách bảo mật
                   </a>
                 </li>
               </ul>
@@ -124,10 +124,10 @@ export default function Footer() {
             {/* Subcribe Col */}
             <div className="lg:mx-auto text-left">
               <h4 className="text-2xl text-gray-900 font-extrabold mb-7">
-                Subscribe
+                Đăng ký
               </h4>
               <p className="text-gray-800 font-medium hover:underline cursor-pointer leading-6 mb-7">
-                Subscribe to get the latest news from us
+                Đăng ký để nhận thông tin mới nhất từ chúng tôi
               </p>
             </div>
           </div>
@@ -137,7 +137,7 @@ export default function Footer() {
         <div className="py-4 flex items-center justify-center bg-[#f6f8f9]">
           <div className="flex items-center justify-center flex-col lg:justify-between lg:flex-row">
             <span className="text-gray-600 text-sm font-medium">
-              Copyright © 2026 Tuanori, All rights reserved.
+              Bản quyền © 2026 Likesub, Tất cả các quyền được bảo lưu.
             </span>
           </div>
         </div>

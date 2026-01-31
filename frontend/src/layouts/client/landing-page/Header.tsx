@@ -28,13 +28,13 @@ export default function Header() {
     >
       <div className="w-full bg-[#1e40af] h-8.5 text-white flex items-center justify-center gap-2">
         <span className="text-[13px] font-medium">
-          Use Open Graph to boost your social media CTR
+          Tăng tương tác mạng xã hội - Nâng tầm thương hiệu của bạn
         </span>
         <Link
           href={"https://likesub.io.vn/"}
           className="font-bold text-[14px] border-b cursor-pointer"
         >
-          Learn More
+          Tìm hiểu thêm
         </Link>
       </div>
 
