@@ -1,0 +1,17 @@
+name: Block main to dev PR
+
+on:
+  pull_request:
+    branches:
+      - dev
+
+jobs:
+  block-main:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check source branch
+        run: |
+          if [[ "${{ github.head_ref }}" == "main" && "${{ github.actor }}" != "InfinitriByLeminhtri" ]]; then
+            echo "❌ Only admin can merge main to dev"
+            exit 1
+            fi
