@@ -64,6 +64,21 @@ services:
       ASPNETCORE_URLS: http://+:8082
     networks:
       - snms-network
+  wallet-service:
+    build:
+      context: ../../backend/wallet-service
+      dockerfile: ../../container/dockerfiles/ci/wallet.ci.Dockerfile
+    image: snms-wallet-service:ci
+    container_name: snms-wallet-ci
+    expose:
+      - "8083"
+    volumes:
+      - ../../backend/wallet-service/appsettings.Development.json:/app/appsettings.Development.json:ro
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8083
+    networks:
+      - snms-network
 
 networks:
   snms-network:
