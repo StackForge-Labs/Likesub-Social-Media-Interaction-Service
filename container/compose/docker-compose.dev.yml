@@ -35,6 +35,8 @@ services:
   user-service:
     image: minhtri269/snms-user-service:dev-latest
     container_name: snms-user-dev
+    ports:
+      - "8081:8081"
     expose:
       - "8081"
     volumes:
@@ -68,6 +70,8 @@ services:
   social-service:
     image: minhtri269/snms-social-service:dev-latest
     container_name: snms-social-dev
+    ports:
+      - "8082:8082"
     expose:
       - "8082"
     volumes:
@@ -80,6 +84,39 @@ services:
       DOTNET_USE_POLLING_FILE_WATCHER: "true"
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
     command: dotnet watch --project social-service.csproj run --no-launch-profile
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - snms-network
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 512MB
+        reservations:
+          cpus: 0.25
+          memory: 256MB
+    restart: unless-stopped
+  wallet-service:
+    image: minhtri269/snms-wallet-service:dev-latest
+    container_name: snms-wallet-dev
+    ports:
+      - "8083:8083"
+    expose:
+      - "8083"
+    volumes:
+      - ../../backend/wallet-service:/app
+      - wallet_bin:/app/bin
+      - wallet_obj:/app/obj
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8083
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
+    command: dotnet watch --project wallet-service.csproj run --no-launch-profile
     depends_on:
       mysql-db:
         condition: service_healthy
@@ -188,6 +225,10 @@ volumes:
     name: cocial_bin
   social_obj:
     name: socaial_obj
+  wallet_bin:
+    name: wallet_bin
+  wallet_obj:
+    name: wallet_obj
   mysql_data_dev:
     name: mysql_data_dev
   redis_data:

@@ -19,6 +19,10 @@ const envMappings = [
   {
     source: 'container/environment/social-service/appsettings.example.json',
     target: 'backend/social-service/appsettings.Development.json'
+  },
+  {
+    source: 'container/environment/wallet-service/appsettings.example.json',
+    target: 'backend/wallet-service/appsettings.Development.json'
   }
 ];
 
@@ -49,5 +53,6 @@ envMappings.forEach(({ source, target }) => {
 
 console.log('\n✅ Setup complete!');
 console.log('\nNext steps:');
-console.log('  1. Edit .env files with your configuration');
-console.log('  2. Run: npm run dev');
+console.log('  1. Edit .env || environment files with your configuration');
+console.log('  2. Run: npm run dev:pull');
+console.log('  3. Run: npm run dev:build');

@@ -1,4 +1,4 @@
-using social_service.Configuration;
+using wallet_service.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +11,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Social Service API v1"));
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Wallet Service API v1"));
 }
 
-app.MapGet("/health", () => Results.Ok("Social is running...")).WithTags("Health");
+app.MapGet("/health", () => Results.Ok("Wallet is running...")).WithTags("Health");
+
+app.UseHttpsRedirection();
 
 app.Run();
-
