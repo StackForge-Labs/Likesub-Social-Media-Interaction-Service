@@ -16,7 +16,7 @@ public static class SwaggerConfiguration
                 Contact = new OpenApiContact
                 {
                     Name = "Likesub Team",
-                    Email = "leminhtri260903@gmail.com.com"
+                    Email = "leminhtri260903@gmail.com"
                 }
             });
 
