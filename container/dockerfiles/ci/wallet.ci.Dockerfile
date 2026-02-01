@@ -18,4 +18,4 @@ COPY --from=build /app/publish .
 
 EXPOSE 8083
 
-ENTRYPOINT ["dotnet", "social-service.dll"]
+ENTRYPOINT ["dotnet", "wallet-service.dll"]

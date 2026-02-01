@@ -18,6 +18,7 @@ jobs:
       gateway: ${{ steps.filter.outputs.gateway }}
       user: ${{ steps.filter.outputs.user }}
       social: ${{ steps.filter.outputs.social }}
+      wallet: ${{steps.filter.outputs.wallet}}
     steps:
       - uses: actions/checkout@v4
       
@@ -35,7 +36,7 @@ jobs:
               - 'backend/social-service/*.csproj'
               - 'container/dockerfiles/dev/social.dev-base.Dockerfile'
             wallet:
-              - 'backned/wallet-service/*.csproj'
+              - 'backend/wallet-service/*.csproj'
               - 'container/dockerfiles/dev/wallet.dev-base.Dockerfile'
   
   build-gateway-dev:
@@ -126,7 +127,7 @@ jobs:
           cache-to: type=inline
   build-wallet-dev:
     needs: detect-changes
-    if: needs.detect-changes.outputs.social == 'true'
+    if: needs.detect-changes.outputs.wallet == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

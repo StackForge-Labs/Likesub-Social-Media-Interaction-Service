@@ -18,9 +18,4 @@ app.MapGet("/health", () => Results.Ok("Wallet is running...")).WithTags("Health
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
 app.Run();
