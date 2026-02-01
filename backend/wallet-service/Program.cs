@@ -16,6 +16,4 @@ if (app.Environment.IsDevelopment())
 
 app.MapGet("/health", () => Results.Ok("Wallet is running...")).WithTags("Health");
 
-app.UseHttpsRedirection();
-
 app.Run();
