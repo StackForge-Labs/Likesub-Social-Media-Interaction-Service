@@ -1,10 +1,12 @@
 using wallet_service.Configuration;
+using wallet_service.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerConfiguration();
+builder.Services.AddData(builder.Configuration, builder.Environment);
 
 var app = builder.Build();
 
