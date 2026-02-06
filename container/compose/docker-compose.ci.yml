@@ -3,15 +3,15 @@ services:
     build:
       context: ../../backend
       dockerfile: ../../container/dockerfiles/backend.ci.Dockerfile
-    image: snms-wallet-service:ci
-    container_name: snms-wallet-ci
+    image: backend:ci
+    container_name: likesub-backend-ci
     expose:
-      - "8083"
+      - "8080"
     volumes:
       - ../../backend/appsettings.Development.json:/app/appsettings.Development.json:ro
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8083
+      ASPNETCORE_URLS: http://+:8080
     networks:
       - likesub-network
 
