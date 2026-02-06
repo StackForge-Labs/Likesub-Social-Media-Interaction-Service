@@ -1,86 +1,21 @@
 services:
-  # ============================================
-  # 🚪 API GATEWAY - Public
-  # ============================================
-  api-gateway:
+   backend:
     build:
-      context: ../../backend/api-gateway
-      dockerfile: ../../container/dockerfiles/ci/gateway.ci.Dockerfile
-    image: snms-api-gateway:ci
-    container_name: snms-gateway-ci
-    ports:
-      - "8000:8000"
-    volumes:
-      - ../../backend/api-gateway/appsettings.Development.json:/app/appsettings.Development.json:ro
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8000
-    networks:
-      - snms-network
-    depends_on:
-      - user-service
-      - social-service
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 20s
-
-  # ============================================
-  # 👤 USER SERVICE - Internal
-  # ============================================
-  user-service:
-    build:
-      context: ../../backend/user-service
-      dockerfile: ../../container/dockerfiles/ci/user.ci.Dockerfile
-    image: snms-user-service:ci
-    container_name: snms-user-ci
-    expose:
-      - "8081"
-    volumes:
-      - ../../backend/user-service/appsettings.Development.json:/app/appsettings.Development.json:ro
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8081
-    networks:
-      - snms-network
-
-  # ============================================
-  # 🌐 SOCIAL SERVICE - Internal
-  # ============================================
-  social-service:
-    build:
-      context: ../../backend/social-service
-      dockerfile: ../../container/dockerfiles/ci/social.ci.Dockerfile
-    image: snms-social-service:ci
-    container_name: snms-social-ci
-    expose:
-      - "8082"
-    volumes:
-      - ../../backend/social-service/appsettings.Development.json:/app/appsettings.Development.json:ro
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8082
-    networks:
-      - snms-network
-  wallet-service:
-    build:
-      context: ../../backend/wallet-service
-      dockerfile: ../../container/dockerfiles/ci/wallet.ci.Dockerfile
+      context: ../../backend
+      dockerfile: ../../container/dockerfiles/backend.ci.Dockerfile
     image: snms-wallet-service:ci
     container_name: snms-wallet-ci
     expose:
       - "8083"
     volumes:
-      - ../../backend/wallet-service/appsettings.Development.json:/app/appsettings.Development.json:ro
+      - ../../backend/appsettings.Development.json:/app/appsettings.Development.json:ro
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:8083
     networks:
-      - snms-network
+      - likesub-network
 
 networks:
-  snms-network:
+  likesub-network:
     driver: bridge
-    name: snms-ci-network
+    name: likesub-ci-network

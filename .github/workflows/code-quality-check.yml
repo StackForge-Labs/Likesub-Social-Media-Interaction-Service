@@ -47,13 +47,13 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore backend/Social-network-service-management-system.sln
+        run: dotnet restore backend/backend.sln
 
       - name: Build (no publish)
-        run: dotnet build backend/Social-network-service-management-system.sln --no-restore --configuration Debug
+        run: dotnet build backend/backend.sln --no-restore --configuration Debug
 
       - name: Format check
-        run: dotnet format backend/Social-network-service-management-system.sln --verify-no-changes
+        run: dotnet format backend/backend.sln --verify-no-changes
 
   frontend-lint:
     name: Frontend - Lint & Type Check

@@ -17,6 +17,6 @@ RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/publish .
 
-EXPOSE 8000
+EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "api-gateway.dll"]
+ENTRYPOINT ["dotnet", "backend.dll"]
