@@ -50,7 +50,7 @@ jobs:
         run: dotnet restore backend/backend.sln
 
       - name: Build (no publish)
-        run: dotnet build backend/backend.sln --no-restore --configuration Debug
+        run: dotnet build backend/backend.sln --no-restore --configuration Release
 
       - name: Format check
         run: dotnet format backend/backend.sln --verify-no-changes

@@ -1,8 +1,8 @@
 services:
    backend:
     build:
-      context: ../../backend
-      dockerfile: ../../container/dockerfiles/backend.ci.Dockerfile
+      context: ../..
+      dockerfile: container/dockerfiles/backend.ci.Dockerfile
     image: backend:ci
     container_name: likesub-backend-ci
     expose:
