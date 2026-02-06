@@ -19,7 +19,7 @@ jobs:
       
       - name: Create environment files
         run: |
-          cp container/environment/backned/appsettings.Development.template.json backend/appsettings.Development.json
+          cp container/environment/backend/appsettings.Development.template.json backend/appsettings.Development.json
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
