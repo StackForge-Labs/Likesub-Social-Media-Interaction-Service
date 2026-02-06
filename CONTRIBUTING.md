@@ -41,14 +41,13 @@ git push origin feature/ten-tinh-nang
 
 ### 5. Release lên Main
 - Tạo PR từ `dev` → `main`
-- Cần approval từ lead/admin
+- Nên approval từ lead/admin
 - CI/CD sẽ tự động chạy
 
 ## 🚫 Quy tắc
 
 ### ❌ KHÔNG ĐƯỢC:
 - Push trực tiếp lên `main` hoặc `dev`
-- Merge mà chưa có approval
 - Merge khi CI đang fail
 - Force push lên common branches(`dev`, `main`)
 
@@ -56,7 +55,6 @@ git push origin feature/ten-tinh-nang
 - Tạo feature branch cho mỗi tính năng
 - Viết commit message rõ ràng
 - Test kỹ trước khi tạo PR
-- Rebase với target branch trước khi merge
 
 ## 📝 Commit Message Convention
 
@@ -101,41 +99,18 @@ any-branch-name (tự do đặt tên)
 
 Trước khi tạo PR, đảm bảo:
 ```bash
-
-# Check services
-curl http://localhost:8000/health/check
-
-json return:
-{
-    "status": "Healthy",
-    "services": [
-        {
-        "name": "user-service",
-        "status": "Healthy",
-        "description": null
-        },
-        {
-        "name": "social-service",
-        "status": "Healthy",
-        "description": null
-        }
-    ]
-}
-
-```bash
-
-## 👥 Code Review
-
+```
 ### Reviewer checklist:
-- [ ] Code logic đúng
-- [ ] Không có security issues
-- [ ] Performance tốt
-- [ ] Code style nhất quán
-- [ ] Documentation đầy đủ
-- [ ] Tests pass
-
+- [✅] Code logic đúng
+- [✅] Không có security issues
+- [✅] Performance tốt
+- [✅] Code style nhất quán
+- [✅] Documentation đầy đủ
+- [✅] Tests pass
+```
 ## 🆘 Cần giúp đỡ?
 
 - Tạo issue trên GitHub
 - Hỏi trong team chat
 - Đọc documentation trong `/documents`
+

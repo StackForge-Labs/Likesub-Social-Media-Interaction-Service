@@ -9,21 +9,9 @@ const envMappings = [
     target: 'frontend/.env'
   },
   {
-    source: 'container/environment/api-gateway/appsettings.example.json',
-    target: 'backend/api-gateway/appsettings.Development.json'
+    source: 'container/environment/backend/appsettings.Development.template.json',
+    target: 'backend/appsettings.Development.json'
   },
-  {
-    source: 'container/environment/user-service/appsettings.example.json',
-    target: 'backend/user-service/appsettings.Development.json'
-  },
-  {
-    source: 'container/environment/social-service/appsettings.example.json',
-    target: 'backend/social-service/appsettings.Development.json'
-  },
-  {
-    source: 'container/environment/wallet-service/appsettings.example.json',
-    target: 'backend/wallet-service/appsettings.Development.json'
-  }
 ];
 
 console.log('🔧 Setting up environment files...\n');
