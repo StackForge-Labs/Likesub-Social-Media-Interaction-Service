@@ -5,8 +5,8 @@ CREATE DATABASE IF NOT EXISTS Likesub-Social-Media-Interaction
 
 
 
-CREATE USER IF NOT EXISTS 'likesub_service'@'%' IDENTIFIED BY 'likesub_pass';
+CREATE USER IF NOT EXISTS 'likesub'@'%' IDENTIFIED BY 'likesub_pass';
 
-GRANT ALL PRIVILEGES ON backend_lsmi.* TO 'likesub'@'%';
+GRANT ALL PRIVILEGES ON 'Likesub-Social-Media-Interaction'* TO 'likesub'@'%';
 
 FLUSH PRIVILEGES;

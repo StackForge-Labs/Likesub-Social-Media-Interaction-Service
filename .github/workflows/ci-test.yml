@@ -8,8 +8,8 @@ on:
   pull_request:
     branches: ['dev']
     paths:
-      - 'backend/*'
-      - 'container/*'
+      - 'backend/**'
+      - 'container/**'
 
 jobs:
   test:
