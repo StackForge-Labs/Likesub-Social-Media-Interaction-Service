@@ -9,17 +9,9 @@ const envMappings = [
     target: 'frontend/.env'
   },
   {
-    source: 'container/environment/api-gateway/appsettings.example.json',
-    target: 'backend/api-gateway/appsettings.Development.json'
+    source: 'container/environment/backend/appsettings.Development.template.json',
+    target: 'backend/appsettings.Development.json'
   },
-  {
-    source: 'container/environment/user-service/appsettings.example.json',
-    target: 'backend/user-service/appsettings.Development.json'
-  },
-  {
-    source: 'container/environment/social-service/appsettings.example.json',
-    target: 'backend/social-service/appsettings.Development.json'
-  }
 ];
 
 console.log('🔧 Setting up environment files...\n');
@@ -49,5 +41,6 @@ envMappings.forEach(({ source, target }) => {
 
 console.log('\n✅ Setup complete!');
 console.log('\nNext steps:');
-console.log('  1. Edit .env files with your configuration');
-console.log('  2. Run: npm run dev');
+console.log('  1. Edit .env || environment files with your configuration');
+console.log('  2. Run: npm run dev:pull');
+console.log('  3. Run: npm run dev:build');

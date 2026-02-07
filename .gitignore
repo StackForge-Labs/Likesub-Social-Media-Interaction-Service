@@ -2,9 +2,10 @@
 # Environment / Secrets
 # ========================
 appsettings.*.json
-!appsettings.example.json
+!appsettings.*.template.json
 
 .env
+!.env.example
 # ========================
 # OS / IDE
 # ========================
@@ -16,8 +17,8 @@ Thumbs.db
 # ========================
 # .NET build artifacts
 # ========================
-**/bin/
-**/obj/
+bin/
+obj/
 *.user
 *.suo
 *.nuget.*

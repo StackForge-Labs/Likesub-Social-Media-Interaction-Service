@@ -1,113 +1,48 @@
 services:
-  # API GATEWAY - Public
+  # Backend
   api-gateway:
-    image: minhtri269/snms-api-gateway:dev-latest
-    container_name: snms-gateway-dev
+    image: minhtri269/likesub-backend:dev-latest
+    container_name: likesub-backend-dev
     ports:
-      - "8000:8000"
+      - "8080:8080"
     volumes:
-      - ../../backend/api-gateway:/app
-      - gateway_bin:/app/bin
-      - gateway_obj:/app/obj
+      - ../../backend:/app
+      - backend_bin:/app/bin
+      - backend_obj:/app/obj
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8000
+      ASPNETCORE_URLS: http://+:8080
       DOTNET_USE_POLLING_FILE_WATCHER: "true"
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
-    command: dotnet watch --project api-gateway.csproj run --no-launch-profile
+    command: dotnet watch --project backend.csproj run --no-launch-profile
     depends_on:
-      - user-service
-      - social-service
+      - mysql-db
       - redis
     deploy:
       resources:
         limits:
+          cpus: 2
+          memory: 1GB
+        reservations:
           cpus: 1
           memory: 512MB
-        reservations:
-          cpus: 0.5
-          memory: 256MB
     networks:
-      - snms-network
+      - likesub-network
     restart: unless-stopped
 
-  #  USER SERVICE - Internal
-  user-service:
-    image: minhtri269/snms-user-service:dev-latest
-    container_name: snms-user-dev
-    expose:
-      - "8081"
-    volumes:
-      - ../../backend/user-service:/app
-      - user_bin:/app/bin
-      - user_obj:/app/obj
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8081
-      DOTNET_USE_POLLING_FILE_WATCHER: "true"
-      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
-    command: dotnet watch --project user-service.csproj run --no-launch-profile
-    depends_on:
-      mysql-db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    networks:
-      - snms-network
-    deploy:
-      resources:
-        limits:
-          cpus: 0.5
-          memory: 512MB
-        reservations:
-          cpus: 0.25
-          memory: 256MB
-    restart: unless-stopped
-
-  # SOCIAL SERVICE - Internal
-  social-service:
-    image: minhtri269/snms-social-service:dev-latest
-    container_name: snms-social-dev
-    expose:
-      - "8082"
-    volumes:
-      - ../../backend/social-service:/app
-      - social_bin:/app/bin
-      - social_obj:/app/obj
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8082
-      DOTNET_USE_POLLING_FILE_WATCHER: "true"
-      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
-    command: dotnet watch --project social-service.csproj run --no-launch-profile
-    depends_on:
-      mysql-db:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    networks:
-      - snms-network
-    deploy:
-      resources:
-        limits:
-          cpus: 0.5
-          memory: 512MB
-        reservations:
-          cpus: 0.25
-          memory: 256MB
-    restart: unless-stopped
+  
 
   # REDIS - Cache 
   redis:
     image: redis:7-alpine
-    container_name: snms-redis-dev
+    container_name: likesub-redis-dev
     ports:
       - "6379:6379"          
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes
     networks:
-      - snms-network
+      - likesub-network
     deploy:
       resources:
         limits:
@@ -168,26 +103,18 @@ services:
           cpus: 0.25
           memory: 32M
     networks:
-      - snms-network
+      - likesub-network
 #=============================================================
 networks:
-  snms-network:
+  likesub-network:
     driver: bridge
-    name: snms-dev-network
+    name: likesub-dev-network
 
 volumes:
-  gateway_bin:
-    name: gateway_bin
-  gateway_obj:
-    name: gateway_obj
-  user_bin:
-    name: user_bin
-  user_obj:
-    name: user_obj
-  social_bin:
-    name: cocial_bin
-  social_obj:
-    name: socaial_obj
+  backend_bin:
+    name: backend_bin
+  backend_obj:
+    name: backend_obj
   mysql_data_dev:
     name: mysql_data_dev
   redis_data:
