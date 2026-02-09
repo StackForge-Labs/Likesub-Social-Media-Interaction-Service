@@ -1,18 +1,19 @@
 ﻿# Features
 
 **Purpose**
-Tổ chức code theo feature để dễ mở rộng, dễ bảo trì trong backend monolithic.
+Tổ chức code theo module nghiệp vụ để dễ mở rộng và tách microservice sau này.
 
 **What goes here**
-Controllers, DTOs, services, repositories (interface + implementation), validators, mapping profiles theo từng feature.
+Controllers, DTOs, Services, Repositories (interface + implementation), Validators, Mapping profiles theo từng module.
 
 **What should NOT go here**
-DbContext, Redis/Auth configs, options bindings, hoặc các thành phần hạ tầng.
+`DbContext`, Redis/Auth configs, options bindings, hoặc hạ tầng kỹ thuật.
 
 **Examples**
 `PostsController.cs`, `PostService.cs`, `PostRepository.cs`, `CreatePostRequest.cs`.
 
 **Rules**
-- Mỗi feature là một module rõ ràng, đủ lớn.
-- Controller gọi Service, Service gọi Repository, Repository dùng DbContext.
-- Không rải logic hạ tầng vào feature.
+- Mỗi module có file entry `*Module.cs` để đăng ký DI.
+- Controller -> Service -> Repository là luồng bắt buộc.
+- Module không gọi implementation của module khác.
+- Không rải logic hạ tầng vào module.

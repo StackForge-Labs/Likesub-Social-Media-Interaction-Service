@@ -1,149 +1,130 @@
-﻿# Backend structure (feature-based monolith)
+﻿# Modular Monolith (.NET Web API)
 
-Tài liệu này mô tả ý nghĩa, trách nhiệm và cách sử dụng các folder chính trong backend (ASP.NET Web API + EF Core) theo cấu trúc feature-based.
+Mục tiêu: mô hình monolithic nhưng tách module rõ ràng để scale theo nghiệp vụ, dễ maintain, và có thể tách microservice mà không rewrite logic. Vẫn chỉ có 1 application, không tạo nhiều `Program.cs`.
 
-## Ranh giới tầng (boundary bắt buộc)
+## 1) Modular Monolith là gì (trong .NET Web API)
 
-- Controller chỉ nhận/validate request, gọi Service, trả response.
-- Service xử lý nghiệp vụ, orchestration, gọi Repository.
-- Repository chỉ truy cập dữ liệu, làm việc với `DbContext`.
-- `DbContext` chỉ đặt ở tầng Persistence, không được truy cập trực tiếp từ Controller/Service.
+Modular Monolith là một ứng dụng duy nhất nhưng được chia thành các module tự chứa (self-contained) theo nghiệp vụ. Mỗi module có Controller/Service/Repository/DTO riêng và đăng ký DI qua file entry của module. Các module chỉ giao tiếp qua contract (interface/DTO), không gọi implementation của nhau.
 
-## /Features
+## 2) Cấu trúc folder (feature-based + module)
 
-- Mục đích: Tập trung code theo từng feature (Posts, Likes, Comments, Users...) để dễ mở rộng và bảo trì.
-- Chứa: Controllers, DTOs, Services, Repositories, Validators, Mapping profiles theo từng feature.
-- Ví dụ file/class: `PostsController.cs`, `PostService.cs`, `PostRepository.cs`, `CreatePostRequest.cs`.
-- Nên:
-- Tên feature rõ nghĩa, nhất quán (`Posts`, `Likes`).
-- Mỗi feature có ranh giới đủ lớn (tránh phân mảnh).
-- Không nên:
-- Tạo “feature” chỉ chứa 1 class lẻ tẻ.
-- Trộn code Infrastructure vào đây (DbContext, Redis, Auth configs).
+```
+/
+  Common/
+  Infrastructure/
+    Persistence/
+    Redis/
+    Auth/
+    Options/
+  Features/
+    Auth/
+      AuthModule.cs
+      Controllers/
+      DTOs/
+      Services/
+      Repositories/
+      Validators/
+    Likes/
+      LikesModule.cs
+      Controllers/
+      DTOs/
+      Services/
+      Repositories/
+      Validators/
+```
 
-## /Infrastructure
+## 3) Trách nhiệm từng thành phần trong 1 module (ví dụ Auth/Login)
 
-- Mục đích: Chứa các thành phần kỹ thuật dùng chung (persistence, auth, cache, cấu hình...).
-- Chứa: DbContext, cấu hình EF Core, Redis clients, JWT/auth handlers, option models.
-- Ví dụ file/class: `ApplicationDbContext.cs`.
-- Nên:
-- Tách rõ phần thuần kỹ thuật, không chứa nghiệp vụ.
-- Định nghĩa DI registrations ở đây hoặc trong `Program.cs` gọi tới đây.
-- Không nên:
-- Đặt Controller/Service/Repository của feature ở đây.
-- Trộn logic nghiệp vụ vào Infrastructure.
+- Controller: nhận HTTP, validate request model, gọi Service, trả response.
+- Service: xử lý nghiệp vụ (login, verify password, issue token), orchestration.
+- Repository: truy cập dữ liệu (User, RefreshToken), không xử lý nghiệp vụ.
+- DTO: request/response cho API, không chứa logic.
+- Validator: validate dữ liệu đầu vào (FluentValidation), không truy cập DB nếu không cần.
+- Module entry: `AuthModule.cs` đăng ký DI của module.
 
-### /Infrastructure/Persistence
+Ví dụ file entry module:
+```csharp
+// Features/Auth/AuthModule.cs
+public static class AuthModule
+{
+    public static IServiceCollection AddAuthModule(this IServiceCollection services)
+    {
+        services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddValidatorsFromAssemblyContaining<LoginRequestValidator>();
+        return services;
+    }
+}
+```
 
-- Mục đích: Tầng truy cập dữ liệu (EF Core).
-- Chứa: `DbContext`, EF Core configurations, migrations, repositories (implementation).
-- Ví dụ file/class: `ApplicationDbContext.cs`.
-- Nên:
-- Repository chỉ phụ thuộc `DbContext` và entities.
-- Tách `EntityTypeConfiguration` nếu model phức tạp.
-- Không nên:
-- Query từ Controller/Service trực tiếp vào `DbContext`.
-- Gắn logic nghiệp vụ vào repository.
+## 4) Luồng xử lý chuẩn
 
-### /Infrastructure/Redis
+HTTP Request -> Controller -> Service -> Repository -> Infrastructure -> Database
 
-- Mục đích: Tích hợp cache/Redis.
-- Chứa: Redis connection, cache service, key conventions.
-- Ví dụ file/class: `RedisCacheService.cs`, `RedisOptions.cs`.
-- Nên:
-- Bọc Redis qua interface (`ICacheService`).
-- Quy ước key rõ ràng, có prefix theo feature.
-- Không nên:
-- Gọi Redis trực tiếp trong Controller.
-- Để cache logic nằm rải rác nhiều nơi.
+## 5) Quy tắc boundary bắt buộc
 
-### /Infrastructure/Auth
+- Module không gọi implementation của module khác (chỉ gọi interface/contract nếu cần).
+- Infrastructure chỉ chứa hạ tầng, không chứa business logic.
+- `DbContext` chỉ nằm trong `Infrastructure/Persistence`, không truy cập trực tiếp từ Controller/Service.
 
-- Mục đích: Xác thực/ủy quyền (JWT, API key, policy, claims).
-- Chứa: JWT settings, auth handlers, policy definitions.
-- Ví dụ file/class: `JwtOptions.cs`, `AuthExtensions.cs`.
-- Nên:
-- Đóng gói cấu hình auth qua extension method (`AddAuth`).
-- Phân tách policy rõ ràng cho từng nhóm quyền.
-- Không nên:
-- Viết logic auth trực tiếp trong Controller.
-- Hard-code secrets trong code.
+## 6) Vì sao dễ tách microservice sau này
 
-## /Common
+Module đã tách boundary rõ ràng (API + business + data access). Khi cần tách:
+- Giữ nguyên Service/Repository/DTO của module.
+- Di chuyển module sang project mới, thay đổi wiring (DI, config, DB).
+=> Không phải rewrite logic, chỉ thay cấu hình và host.
 
-- Mục đích: Tiện ích và thành phần dùng chung toàn hệ thống.
-- Chứa: Attributes, extensions, helpers, middlewares dùng chung.
-- Ví dụ file/class: `ValidateModelAttribute.cs`, `ServiceCollectionExtensions.cs`, `DateTimeHelper.cs`, `ExceptionHandlingMiddleware.cs`.
-- Nên:
-- Chỉ chứa thành phần thực sự dùng chung nhiều feature.
-- Giữ API của Common ổn định.
-- Không nên:
-- Đưa logic nghiệp vụ của 1 feature vào Common.
-- Lạm dụng Common như “thùng rác”.
+## 7) Checklist đánh giá "đạt chuẩn Modular Monolith"
 
-### /Common/Attributes
+1. Mỗi module có file entry (`<ModuleName>Module.cs`) đăng ký DI.
+2. Module tự chứa đầy đủ Controller/Service/Repository/DTO/Validator.
+3. Không có Controller/Service gọi `DbContext` trực tiếp.
+4. Không có module gọi implementation của module khác.
+5. Infrastructure chỉ chứa tech concerns (DB, Redis, Auth, Options).
+6. DTO không chứa business logic.
+7. Common không bị lạm dụng cho logic nghiệp vụ.
+8. 1 `Program.cs` duy nhất, app deploy 1 instance.
 
-- Mục đích: Attribute dùng chung để gắn metadata hoặc áp dụng cross-cutting behavior.
-- Chứa: Action/validation attributes, marker attributes.
-- Ví dụ file/class: `ValidateModelAttribute.cs`, `RequireRoleAttribute.cs`.
-- Nên:
-- Chỉ dùng cho quy tắc áp dụng rộng, không gắn nghiệp vụ đặc thù 1 feature.
-- Đặt tên rõ ràng và mô tả hiệu ứng của attribute.
-- Không nên:
-- Đưa logic xử lý nặng vào attribute.
-- Lạm dụng attribute để thay thế middleware/pipeline.
+## 8) Ưu/nhược điểm so với các mô hình khác
 
-### /Common/Extensions
+So với Layered Monolith:
+- Ưu: Boundary theo nghiệp vụ rõ hơn, ít cross-dependency, dễ scale team.
+- Nhược: Cần kỷ luật module, setup DI/structure nhiều hơn.
 
-- Mục đích: Các extension methods dùng chung cho DI, HTTP, string, collection...
-- Chứa: Extension cho `IServiceCollection`, `IApplicationBuilder`, `HttpContext`, `IQueryable`.
-- Ví dụ file/class: `ServiceCollectionExtensions.cs`, `HttpContextExtensions.cs`.
-- Nên:
-- Nhóm extension theo chủ đề rõ ràng.
-- Trả về đối tượng gốc để chain fluent khi phù hợp.
-- Không nên:
-- Tạo extension làm thay đổi trạng thái khó đoán.
-- Đặt logic nghiệp vụ vào extension dùng chung.
+So với Microservices:
+- Ưu: Đơn giản vận hành, không tốn overhead distributed system.
+- Nhược: Không scale độc lập theo hạ tầng như microservices.
 
-### /Common/Helpers
+## 9) Quy ước folder chi tiết
 
-- Mục đích: Hàm tiện ích thuần (pure) dùng lại nhiều nơi.
-- Chứa: Helper xử lý thời gian, chuỗi, file, mapping nhẹ.
-- Ví dụ file/class: `DateTimeHelper.cs`, `SlugHelper.cs`.
-- Nên:
-- Giữ helper stateless, dễ test.
-- Ưu tiên phương thức tĩnh, không phụ thuộc DI nếu không cần.
-- Không nên:
-- Tạo helper như “kho chứa mọi thứ”.
-- Đặt code truy cập DB hoặc HTTP trong helpers.
+/Features
+- Mục đích: Tập trung code theo module nghiệp vụ (Posts, Likes, Auth...).
+- Chứa: Controllers, DTOs, Services, Repositories, Validators, Mapping profiles.
+- Không đặt Infrastructure vào đây.
 
-### /Common/Middlewares
+/Infrastructure
+- Mục đích: Hạ tầng kỹ thuật dùng chung (persistence, auth, cache, options).
+- Không chứa nghiệp vụ.
 
-- Mục đích: Cross-cutting pipeline của ASP.NET Core (logging, error handling, correlation id...).
-- Chứa: Middleware classes và extension đăng ký.
-- Ví dụ file/class: `ExceptionHandlingMiddleware.cs`, `RequestLoggingMiddleware.cs`.
-- Nên:
-- Middleware chỉ xử lý concern chung, không chứa nghiệp vụ.
-- Tạo extension `UseXyz` để đăng ký thống nhất.
-- Không nên:
-- Viết middleware chuyên biệt cho 1 feature.
-- Nuốt exception mà không log hoặc không trả response chuẩn.
+/Common
+- Mục đích: Utilities dùng chung toàn hệ thống (middlewares, helpers, extensions).
+- Không đưa logic nghiệp vụ vào đây.
 
 ## Sai lầm thường gặp
 
-- Controller gọi thẳng `DbContext` hoặc truy vấn trực tiếp.
-- Service chứa quá nhiều chi tiết truy cập dữ liệu thay vì qua Repository.
-- Repository chứa logic nghiệp vụ (tính toán/điều kiện business).
-- Đặt cấu hình kỹ thuật (Redis/Auth) trong `Features`.
-- Tạo Common quá lớn, mọi thứ đều đẩy vào đó.
+- Controller gọi `DbContext` trực tiếp.
+- Service chứa query DB thay vì gọi Repository.
+- Repository chứa logic nghiệp vụ.
+- Infrastructure bị trộn business logic.
+- Common bị dùng như "thùng rác".
 
-## Checklist khi thêm feature mới
+## Checklist khi thêm module mới
 
-1. Tạo folder feature trong `/Features` (ví dụ: `Posts`).
-2. Tạo Controller và DTO cho request/response.
-3. Tạo Service + interface và đăng ký DI.
-4. Tạo Repository + interface và đăng ký DI.
+1. Tạo folder module trong `/Features` (ví dụ: `Auth`).
+2. Tạo `AuthModule.cs` để đăng ký DI.
+3. Tạo Controller + DTO + Validator.
+4. Tạo Service + Repository + interface và đăng ký DI.
 5. Bổ sung entity/configuration ở Persistence nếu cần.
-6. Thêm mapping/validation cho DTO.
+6. Thêm mapping/validation.
 7. Thêm test tối thiểu cho Service hoặc Repository.
-8. Cập nhật tài liệu hoặc README nếu có quy ước mới.
+8. Cập nhật README nếu có quy ước mới.

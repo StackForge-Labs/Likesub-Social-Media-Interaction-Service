@@ -7,7 +7,7 @@ Xác thực và ủy quyền (JWT, policies, claims).
 JWT settings, auth handlers, policy definitions, auth extension.
 
 **What should NOT go here**
-Nghiệp vụ theo feature hoặc secrets hard-code.
+Nghiệp vụ theo module hoặc secrets hard-code.
 
 **Examples**
 `JwtOptions.cs`, `AuthExtensions.cs`.

@@ -1,16 +1,16 @@
 ﻿# Infrastructure
 
 **Purpose**
-Chứa các thành phần kỹ thuật dùng chung (persistence, auth, cache, config...).
+Chứa các thành phần kỹ thuật dùng chung (persistence, auth, cache, options).
 
 **What goes here**
 DbContext, EF Core configs, Redis clients, auth handlers, option models, extension registrations.
 
 **What should NOT go here**
-Logic nghiệp vụ hoặc code theo feature.
+Logic nghiệp vụ hoặc code theo module.
 
 **Examples**
-`ApplicationDbContext.cs`.
+`ApplicationDbContext.cs`, `AuthExtensions.cs`, `RedisCacheService.cs`.
 
 **Rules**
 - Chỉ chứa hạ tầng kỹ thuật, không chứa nghiệp vụ.

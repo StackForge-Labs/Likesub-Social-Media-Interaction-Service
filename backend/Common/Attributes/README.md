@@ -7,7 +7,7 @@ Attribute dùng chung để gắn metadata hoặc áp dụng cross-cutting behav
 Action/validation attributes, marker attributes.
 
 **What should NOT go here**
-Logic xử lý nặng hoặc nghiệp vụ đặc thù một feature.
+Logic xử lý nặng hoặc nghiệp vụ đặc thù một module.
 
 **Examples**
 `ValidateModelAttribute.cs`, `RequireRoleAttribute.cs`.

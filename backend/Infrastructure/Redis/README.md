@@ -14,4 +14,4 @@ Logic nghiệp vụ hoặc gọi Redis trực tiếp từ Controller.
 
 **Rules**
 - Bọc Redis qua interface (ví dụ `ICacheService`).
-- Quy ước key rõ ràng, có prefix theo feature.
+- Quy ước key rõ ràng, có prefix theo module.
