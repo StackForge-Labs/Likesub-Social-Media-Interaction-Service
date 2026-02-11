@@ -66,6 +66,7 @@ HTTP Request -> Controller -> Service -> Repository -> Infrastructure -> Databas
 - Module không gọi implementation của module khác (chỉ gọi interface/contract nếu cần).
 - Infrastructure chỉ chứa hạ tầng, không chứa business logic.
 - `DbContext` chỉ nằm trong `Infrastructure/Persistence`, không truy cập trực tiếp từ Controller/Service.
+- Hiện chỉ hỗ trợ MySQL; vẫn giữ `Database:Provider` để mở rộng sau này.
 
 ## 6) Vì sao dễ tách microservice sau này
 

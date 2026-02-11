@@ -11,13 +11,15 @@ services:
       - backend_obj:/app/obj
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_HTTP_PORTS: "8080"
       DOTNET_USE_POLLING_FILE_WATCHER: "true"
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
     command: dotnet watch --project backend.csproj run --no-launch-profile
     depends_on:
-      - mysql-db
-      - redis
+      mysql-db:
+        condition: service_healthy
+      # redis:
+      #   condition: service_healthy
     deploy:
       resources:
         limits:

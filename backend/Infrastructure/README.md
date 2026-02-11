@@ -15,3 +15,4 @@ Logic nghiệp vụ hoặc code theo module.
 **Rules**
 - Chỉ chứa hạ tầng kỹ thuật, không chứa nghiệp vụ.
 - Đăng ký DI rõ ràng, ưu tiên extension methods.
+- Hiện chỉ hỗ trợ MySQL; vẫn giữ `Database:Provider` để mở rộng sau này.

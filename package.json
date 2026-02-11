@@ -16,12 +16,12 @@
     "dev:ps": "docker compose -p likesub -f container/compose/docker-compose.dev.yml ps",
     
     "//": "********************* SERVICE SHELL *********************",
-    "dev:backend": "docker exec -it backend-backend-dev sh",
+    "dev:backend": "docker exec -it likesub-backend-dev sh",
     "dev:redis": "docker exec -it likesub-redis-dev redis-cli",
     
     "//": "********************* LOGS *********************",
     "dev:logs": "docker compose -p likesub -f container/compose/docker-compose.dev.yml logs -f --tail=200",
-    "dev:log:backend": "docker compose -p likesub -f container/compose/docker-compose.dev.yml logs -f api-gateway",
+    "dev:log:backend": "docker compose -p likesub -f container/compose/docker-compose.dev.yml logs -f backend",
 
     "//": "********************* FRONTEND (HOST) *********************",
     "frontend:dev": "cd frontend && npm run dev",
