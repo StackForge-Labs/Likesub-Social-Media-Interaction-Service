@@ -4,7 +4,7 @@
   "description": "**Edunext .NET** - Hệ thống quản lý mạng xã hội giáo dục được xây dựng theo kiến trúc microservices với .NET 8 và Next.js.",
   "scripts": {
     "//": "********************* DEVELOPMENT *********************",
-    "setup:dev": "node container/script/setup-env.js",
+    "setup:dev": "node container/scripts/setup-env.js",
     "dev": "npm run setup:dev && docker compose -p snms -f container/compose/docker-compose.dev.yml up",
     "dev:up": "docker compose -p likesub -f container/compose/docker-compose.dev.yml up -d",
     "dev:down": "docker compose -p likesub -f container/compose/docker-compose.dev.yml down",
