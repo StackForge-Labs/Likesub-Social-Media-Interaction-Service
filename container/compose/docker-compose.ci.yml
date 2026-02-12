@@ -11,7 +11,7 @@ services:
       - ../../backend/appsettings.Development.json:/app/appsettings.Development.json:ro
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_HTTP_PORTS: "8080"
     networks:
       - likesub-network
 

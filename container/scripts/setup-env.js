@@ -42,5 +42,5 @@ envMappings.forEach(({ source, target }) => {
 console.log('\n✅ Setup complete!');
 console.log('\nNext steps:');
 console.log('  1. Edit .env || environment files with your configuration');
-console.log('  2. Run: npm run dev:pull');
-console.log('  3. Run: npm run dev:build');
+console.log('  2. Run: npm run sync');
+

@@ -1,6 +1,6 @@
 services:
   # Backend
-  api-gateway:
+  backend:
     image: minhtri269/likesub-backend:dev-latest
     container_name: likesub-backend-dev
     ports:
@@ -11,13 +11,15 @@ services:
       - backend_obj:/app/obj
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_HTTP_PORTS: "8080"
       DOTNET_USE_POLLING_FILE_WATCHER: "true"
       DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
     command: dotnet watch --project backend.csproj run --no-launch-profile
     depends_on:
-      - mysql-db
-      - redis
+      mysql-db:
+        condition: service_healthy
+      # redis:
+      #   condition: service_healthy
     deploy:
       resources:
         limits:
@@ -53,7 +55,7 @@ services:
           memory: 256MB
     restart: unless-stopped
 
-  # Database: SQL Server
+  # Database: mysql
   mysql-db:
     image: mysql:8.0
     container_name: mysql_dev
@@ -63,7 +65,7 @@ services:
       - "3306:3306"          
     volumes:
       - mysql_data_dev:/var/lib/mysql
-      - ../script/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ../scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     command:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
@@ -82,7 +84,7 @@ services:
           cpus: 0.5
           memory: 512MB
     networks:
-      - snms-network
+      - likesub-network
 
   #  phpMyAdmin — optional dev tool
   phpmyadmin:
