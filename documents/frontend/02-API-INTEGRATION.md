@@ -5,8 +5,19 @@
 File: `frontend/src/constants/api/options.constant.ts`
 
 - `baseURL` lấy từ `NEXT_PUBLIC_API_URL`.
-- Khi chạy theo Docker/prod, luôn set `NEXT_PUBLIC_API_URL` qua environment.
+- Luôn set `NEXT_PUBLIC_API_URL` qua environment.
 - Không phụ thuộc fallback local cho môi trường runtime chính thức.
+
+## 1.1 Ổn Định Dependency Giữa Các Máy
+
+Frontend dùng lockfile (`package-lock.json`) để giữ dependency ổn định ở mức package tree.
+
+Khuyến nghị cài đặt:
+
+```bash
+cd frontend
+npm i
+```
 
 ## 2. API Clients
 

@@ -23,13 +23,6 @@
     "dev:logs": "docker compose -p likesub -f container/compose/docker-compose.dev.yml logs -f --tail=200",
     "dev:log:backend": "docker compose -p likesub -f container/compose/docker-compose.dev.yml logs -f backend",
 
-    "//": "********************* FRONTEND (HOST) *********************",
-    "frontend:dev": "cd frontend && npm run dev",
-    "frontend:build": "cd frontend && npm run build",
-    "frontend:start": "cd frontend && npm start",
-    "frontend:lint": "cd frontend && npm run lint",
-    "frontend:install": "cd frontend && npm install",
-    
     "//": "********************* DOCKER UTILITIES *********************",
     "docker:ps": "docker ps -a",
     "docker:stop-all": "docker stop $(docker ps -aq) || true",

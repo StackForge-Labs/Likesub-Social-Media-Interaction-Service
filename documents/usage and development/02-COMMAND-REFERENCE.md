@@ -29,7 +29,18 @@ npm run dev:logs
 npm run dev:log:backend
 ```
 
-## 4. Docker Utilities
+## 4. Frontend (Host-stable)
+
+```bash
+cd frontend
+npm i
+npm run typecheck
+npm run lint
+npm run build
+npm run dev
+```
+
+## 5. Docker Utilities
 
 ```bash
 npm run docker:ps
@@ -46,13 +57,13 @@ npm run docker:reset
 npm run docker:clean-cache
 ```
 
-## 5. Build & Sync
+## 6. Build & Sync
 
 ```bash
 npm run sync
 ```
 
-## 6. Lưu Ý Quan Trọng
+## 7. Lưu Ý Quan Trọng
 
-- Tài liệu này ưu tiên các lệnh Docker/custom script.
-- Nếu cần lệnh kỹ thuật cho backend (EF, build), chạy trong container `likesub-backend-dev`.
+- Backend ưu tiên chạy qua Docker/custom script ở root.
+- Frontend thao tác trực tiếp trong thư mục `frontend/` để đơn giản hóa.
