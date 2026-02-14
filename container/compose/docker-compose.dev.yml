@@ -18,8 +18,8 @@ services:
     depends_on:
       mysql-db:
         condition: service_healthy
-      # redis:
-      #   condition: service_healthy
+      redis:
+        condition: service_healthy
     deploy:
       resources:
         limits:
@@ -38,11 +38,22 @@ services:
   redis:
     image: redis:7-alpine
     container_name: likesub-redis-dev
+    environment:
+      REDIS_PASSWORD: likesub_redis_pass
     ports:
       - "6379:6379"          
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD:-likesub_redis_pass}
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-likesub_redis_pass}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
     networks:
       - likesub-network
     deploy:
@@ -53,6 +64,22 @@ services:
         reservations:
           cpus: 0.25
           memory: 256MB
+    restart: unless-stopped
+
+  # RedisInsight - optional dev tool
+  redisinsight:
+    image: redis/redisinsight:latest
+    container_name: likesub-redisinsight-dev
+    profiles: ["devtools"]
+    ports:
+      - "5540:5540"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - redisinsight_data:/data
+    networks:
+      - likesub-network
     restart: unless-stopped
 
   # Database: mysql
@@ -70,7 +97,7 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-proot"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -121,3 +148,5 @@ volumes:
     name: mysql_data_dev
   redis_data:
     name: redis_data
+  redisinsight_data:
+    name: redisinsight_data

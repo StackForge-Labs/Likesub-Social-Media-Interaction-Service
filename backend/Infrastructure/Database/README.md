@@ -1,4 +1,4 @@
-﻿# Infrastructure/Persistence
+﻿# Infrastructure/Database
 
 **Purpose**
 Tầng truy cập dữ liệu dựa trên EF Core.

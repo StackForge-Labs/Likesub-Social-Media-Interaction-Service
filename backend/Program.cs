@@ -1,4 +1,5 @@
-using backend.Infrastructure.Persistence;
+using backend.Infrastructure.Database;
+using backend.Infrastructure.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +8,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddCaching(builder.Configuration);
+builder.Services.AddDatabase(builder.Configuration);
 
 var app = builder.Build();
 

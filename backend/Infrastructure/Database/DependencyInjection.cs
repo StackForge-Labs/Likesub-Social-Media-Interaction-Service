@@ -1,11 +1,11 @@
 using backend.Infrastructure.Options;
 using Microsoft.EntityFrameworkCore;
 
-namespace backend.Infrastructure.Persistence;
+namespace backend.Infrastructure.Database;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddPersistence(
+    public static IServiceCollection AddDatabase(
         this IServiceCollection services,
         IConfiguration configuration)
     {

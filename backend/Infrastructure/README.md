@@ -1,7 +1,7 @@
 ﻿# Infrastructure
 
 **Purpose**
-Chứa các thành phần kỹ thuật dùng chung (persistence, auth, cache, options).
+Chứa các thành phần kỹ thuật dùng chung (database, auth, cache, options).
 
 **What goes here**
 DbContext, EF Core configs, Redis clients, auth handlers, option models, extension registrations.
