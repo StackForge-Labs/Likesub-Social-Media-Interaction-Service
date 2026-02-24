@@ -1,46 +1,38 @@
 # Docker Workflow
 
-## 1. Compose File
+## 1. Compose Files
 
-File chính cho dev:
+- `Infrastructure/compose/docker-compose.dev.yml`
+- `Infrastructure/compose/docker-compose.ci.yml`
+- `Infrastructure/compose/docker-compose.prod.yml`
 
-- `container/compose/docker-compose.dev.yml`
+## 2. Environment Files
 
-## 2. Service Map
+- `Infrastructure/env/frontend/.env.example`
+- `Infrastructure/env/backend/appsettings.Development.template.json`
+- Root `Infrastructure/env/.env*` is not used at this time.
 
-- `backend`: ASP.NET Core app (`dotnet watch`)
-- `mysql-db`: MySQL 8
-- `redis`: Redis 7 (password + appendonly + healthcheck)
-- `redisinsight`: công cụ quan sát Redis (optional profile)
-- `phpmyadmin`: DB admin tool
+## 3. Development Commands
 
-Thao tác chuẩn:
+- start: `npm run dev:up`
+- stop: `npm run dev:down`
+- rebuild: `npm run dev:rebuild`
+- logs: `npm run dev:logs`
 
-- khởi động: `npm run dev:up`
-- dừng: `npm run dev:down`
-- restart: `npm run dev:restart`
-
-## 3. Networking & Volumes
-
-- Network: `likesub-dev-network`
-- Volumes:
-  - `backend_bin`, `backend_obj`
-  - `mysql_data_dev`
-  - `redis_data`
-  - `redisinsight_data`
-
-## 4. Start RedisInsight (optional)
+## 4. Optional Dev Tools
 
 ```bash
-docker compose -p likesub -f container/compose/docker-compose.dev.yml --profile devtools up -d
+docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml --profile devtools up -d
 ```
 
-## 5. Runtime Healthcheck
+## 5. Healthchecks
 
-- MySQL: `mysqladmin ping -uroot -proot`
-- Redis: `redis-cli -a <password> ping`
+- backend liveness: `/health/live`
+- backend readiness: `/health/ready`
+- mysql: `mysqladmin ping`
+- redis: `redis-cli ping`
 
-## 6. Kịch Bản Rebuild Sạch
+## 6. Clean Rebuild
 
 ```bash
 npm run dev:down

@@ -8,12 +8,12 @@ on:
     paths:
       - backend/**
       - frontend/**
-      - container/dockerfiles/**
+      - Infrastructure/docker/**
   pull_request:
     paths:
       - backend/**
       - frontend/**
-      - container/dockerfiles/**
+      - Infrastructure/docker/**
 
 jobs:
   detect-changes:

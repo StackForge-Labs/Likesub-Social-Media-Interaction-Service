@@ -6,47 +6,50 @@
 - Node.js 20+
 - npm
 
-## 2. Setup Environment Files
+## 2. Bootstrap Environment Files
 
-Từ root project:
+From repository root:
 
 ```bash
 npm run setup:dev
 ```
 
-Script sẽ copy:
+This command creates local files from templates:
 
-- `container/environment/frontend/.env.example` -> `frontend/.env`
-- `container/environment/backend/appsettings.Development.template.json` -> `backend/appsettings.Development.json`
+- `Infrastructure/env/frontend/.env.example` -> `frontend/.env`
+- `Infrastructure/env/backend/appsettings.Development.template.json` -> `backend/appsettings.Development.json`
 
-## 3. Start Stack (Docker)
-
-Khuyến nghị dùng detached mode:
+## 3. Start Development Stack
 
 ```bash
 npm run dev:up
 ```
 
-Lần đầu hoặc khi đổi Dockerfile/dependency:
+When Dockerfile/dependencies changed:
 
 ```bash
 npm run dev:rebuild
 ```
 
-## 4. Check Runtime
+## 4. Validate Runtime
 
 ```bash
 npm run dev:ps
 npm run dev:logs
+curl -fsS http://localhost:8080/health/live
+curl -fsS http://localhost:8080/health/ready
 ```
 
-Các service chính:
+Main services:
 
 - backend: `:8080`
 - mysql: `:3306`
 - redis: `:6379`
+
+Optional tools (`devtools` profile):
+
 - phpmyadmin: `:8070`
-- redisinsight (profile devtools): `:5540`
+- redisinsight: `:5540`
 
 ## 5. Stop Stack
 

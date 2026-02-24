@@ -1,14 +1,15 @@
-# Cấu Trúc Dự Án
+# Cau Truc Du An
 
-## 1. Tổng Quan
+## 1. Tong Quan
 
-Repository gồm 3 phần chính:
+Repository duoc tach ro thanh 4 khu vuc:
 
-- `backend/`: .NET 8 Web API (Modular Monolith, chạy 1 host).
+- `backend/`: .NET 8 Web API (modular monolith).
 - `frontend/`: Next.js (App Router).
-- `container/`: Docker Compose, Dockerfiles, env templates, script setup.
+- `Infrastructure/`: Dockerfiles, Compose, env templates, script van hanh.
+- `.github/workflows/`: CI/CD pipeline.
 
-## 2. Sơ Đồ Thư Mục
+## 2. So Do Thu Muc
 
 ```text
 .
@@ -16,50 +17,51 @@ Repository gồm 3 phần chính:
 │  ├─ Program.cs
 │  ├─ Features/
 │  ├─ Common/
-│  └─ Infrastructure/
-│     ├─ Database/
-│     ├─ Redis/
-│     ├─ Auth/
-│     └─ Options/
+│  └─ Infrastructure/          # application infrastructure (DB, Redis, Auth...)
 ├─ frontend/
-│  ├─ src/app/
-│  ├─ src/components/
-│  ├─ src/api/
-│  ├─ src/hooks/
-│  └─ src/constants/
-├─ container/
+│  └─ ...
+├─ Infrastructure/
+│  ├─ docker/
+│  │  ├─ backend.dev.Dockerfile
+│  │  ├─ backend.ci.Dockerfile
+│  │  └─ backend.prod.Dockerfile
 │  ├─ compose/
-│  ├─ dockerfiles/
-│  ├─ environment/
+│  │  ├─ docker-compose.dev.yml
+│  │  ├─ docker-compose.ci.yml
+│  │  └─ docker-compose.prod.yml
+│  ├─ env/
+│  │  ├─ backend/
+│  │  └─ frontend/
 │  └─ scripts/
+│     ├─ setup-env.js
+│     └─ init-db.sql
+├─ .github/
+│  └─ workflows/
 └─ documents/
 ```
 
-## 3. Vai Trò Theo Khu Vực
+## 3. Vai Tro Theo Khu Vuc
 
 ### Backend
 
-- `Features/`: module nghiệp vụ (hiện tại mới ở trạng thái skeleton/README).
-- `Infrastructure/Database/`: EF Core + MySQL wiring, migration runner.
-- `Infrastructure/Redis/`: cache abstraction dùng chung, key factory, invalidation strategy.
-- `Infrastructure/Options/`: option classes bind từ `appsettings`.
-- `Common/`: thành phần cross-cutting dùng chung.
+- `backend/Infrastructure/`: ha tang ky thuat trong code app (khac voi root `Infrastructure/`).
+- `Features/`: module nghiep vu.
+- `Common/`: cross-cutting concerns.
 
-### Frontend
+### Infrastructure (root)
 
-- `src/app/`: pages/layouts theo route.
-- `src/api/`: API clients (`auth.api.ts`, `user.api.ts`).
-- `src/hooks/api/`: hooks tích hợp React Query.
-- `src/lib/axios/`: axios instance + refresh token queue.
+- `Infrastructure/docker/`: image build logic cho dev/ci/prod.
+- `Infrastructure/compose/`: orchestration theo moi truong.
+- `Infrastructure/env/`: bien moi truong theo moi truong, phuc vu GitOps.
+- `Infrastructure/scripts/`: script setup cho local va automation.
 
-### Container
+### CI/CD
 
-- `container/compose/docker-compose.dev.yml`: stack dev gồm backend, mysql, redis, redisinsight, phpmyadmin.
-- `container/environment/`: templates cho backend/frontend env.
-- `container/scripts/setup-env.js`: copy template env sang file local.
+- `.github/workflows/`: build, quality gate, ci runtime.
+- Compose va Docker path da duoc tach khoi app source de de migrate VPS -> platform -> cloud.
 
-## 4. Trạng Thái Hiện Tại Cần Lưu Ý
+## 4. Trang Thai Hien Tai
 
-- Backend đang có hạ tầng database + redis đầy đủ.
-- Backend chưa có module API nghiệp vụ thực thi trong `Features/`.
-- Frontend đã có contract endpoint cho `auth` và `users`, cần đồng bộ với backend implementation.
+- Runtime config da uu tien qua environment variables.
+- Docker Compose da co healthcheck endpoint cho backend (`/health/live`).
+- Deployment layer da tach rieng khoi application layer.

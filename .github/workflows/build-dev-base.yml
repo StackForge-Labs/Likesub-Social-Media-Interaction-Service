@@ -5,7 +5,7 @@ on:
     paths:
       # Backend dependency triggers
       - 'backend/*.csproj'
-      - 'container/dockerfiles/backend.dev.Dockerfile'
+      - 'Infrastructure/docker/backend.dev.Dockerfile'
 
 jobs:
   detect-changes:
@@ -21,7 +21,7 @@ jobs:
           filters: |
             backend:
               - 'backend/backend.csproj'
-              - 'container/dockerfiles/backend.dev.Dockerfile'
+              - 'Infrastructure/docker/backend.dev.Dockerfile'
   
   build-backend-dev:
     needs: detect-changes
@@ -42,14 +42,14 @@ jobs:
       - name: Build and deploy the backend development to the repository.
         uses: docker/build-push-action@v5
         with:
-          context: ./backend
-          file: ./container/dockerfiles/backend.dev.Dockerfile
+          context: .
+          file: ./Infrastructure/docker/backend.dev.Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-latest
-          cache-to: type=inline
+            ${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   
 
@@ -61,4 +61,4 @@ jobs:
       - name: Notify team
         run: |
           echo "🎉 Dev-base images updated!"
-          echo "Team members: Run 'docker compose pull && docker compose up -d'"
+          echo "Immutable tag: ${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-${{ github.sha }}"

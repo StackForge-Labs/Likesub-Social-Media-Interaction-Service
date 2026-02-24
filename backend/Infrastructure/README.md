@@ -3,6 +3,10 @@
 **Purpose**
 Chứa các thành phần kỹ thuật dùng chung (database, auth, cache, options).
 
+**Note**
+`backend/Infrastructure/` là application infrastructure.
+Deployment infrastructure nằm ở root `Infrastructure/` (docker, compose, env, scripts).
+
 **What goes here**
 DbContext, EF Core configs, Redis clients, auth handlers, option models, extension registrations.
 
