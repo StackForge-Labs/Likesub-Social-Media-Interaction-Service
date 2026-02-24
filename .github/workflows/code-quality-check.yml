@@ -1,4 +1,4 @@
-name: Code Quality Check
+name: Code Quality Gate
 
 on:
   push:
@@ -6,14 +6,14 @@ on:
       - dev
       - main
     paths:
-      - backend/**
-      - frontend/**
-      - Infrastructure/docker/**
+      - 'backend/**'
+      - 'frontend/**'
+      - '.github/workflows/**'
   pull_request:
     paths:
-      - backend/**
-      - frontend/**
-      - Infrastructure/docker/**
+      - 'backend/**'
+      - 'frontend/**'
+      - '.github/workflows/**'
 
 jobs:
   detect-changes:
@@ -21,27 +21,27 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
+      workflows: ${{ steps.filter.outputs.workflows }}
     steps:
       - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v2
+      - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
             backend:
               - 'backend/**'
-            frontend:
-              - 'frontend/**'
+            workflows:
+              - '.github/workflows/**'
 
-  backend-lint:
-    name: Backend - Lint & Format
+  backend-format:
+    name: Backend - Format Check
     needs: detect-changes
     if: needs.detect-changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
+      - name: Set up .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
@@ -49,70 +49,24 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore backend/backend.sln
 
-      - name: Build (no publish)
-        run: dotnet build backend/backend.sln --no-restore --configuration Release
-
-      - name: Format check
+      - name: Verify code formatting
         run: dotnet format backend/backend.sln --verify-no-changes
 
-  frontend-lint:
-    name: Frontend - Lint & Type Check
+  workflow-sanity:
+    name: Workflows - Sanity Check
     needs: detect-changes
-    if: needs.detect-changes.outputs.frontend == 'true'
+    if: needs.detect-changes.outputs.workflows == 'true'
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: ESLint check
-        run: npm run lint
-
-      - name: TypeScript check
-        run: npx tsc --noEmit
-
-  
-  # ---------------------------------------------------
-  # 📋 Summary
-  # ---------------------------------------------------
-  summary:
-    name: Summary
-    needs: [detect-changes, backend-lint, frontend-lint]
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Report result
+      - name: Ensure expected CI workflow files exist
         run: |
-          backend_result="${{ needs.backend-lint.result }}"
-          frontend_result="${{ needs.frontend-lint.result }}"
-          backend_changed="${{ needs.detect-changes.outputs.backend }}"
-          frontend_changed="${{ needs.detect-changes.outputs.frontend }}"
-          
-          failed=false
-          
-          if [ "$backend_changed" == "true" ] && [ "$backend_result" != "success" ]; then
-            echo "❌ Backend checks failed"
-            failed=true
-          fi
-          
-          if [ "$frontend_changed" == "true" ] && [ "$frontend_result" != "success" ]; then
-            echo "❌ Frontend checks failed"
-            failed=true
-          fi
-          
-          if [ "$failed" == "true" ]; then
-            exit 1
-          else
-            echo "✅ All code quality checks passed"
-          fi
+          test -f .github/workflows/frontend-ci.yml
+          test -f .github/workflows/backend-ci.yml
+          test -f .github/workflows/build-push-backend-image.yml
+
+      - name: Ensure legacy duplicate workflow files are removed
+        run: |
+          test ! -f .github/workflows/ci-test.yml
+          test ! -f .github/workflows/build-dev-base.yml

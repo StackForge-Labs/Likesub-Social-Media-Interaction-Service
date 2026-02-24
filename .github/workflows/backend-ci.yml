@@ -1,0 +1,99 @@
+name: Backend CI
+
+on:
+  push:
+    branches: ['dev']
+    paths:
+      - 'backend/**'
+      - 'Infrastructure/compose/docker-compose.ci.yml'
+      - 'Infrastructure/docker/backend.ci.Dockerfile'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: ['dev']
+    paths:
+      - 'backend/**'
+      - 'Infrastructure/compose/docker-compose.ci.yml'
+      - 'Infrastructure/docker/backend.ci.Dockerfile'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  backend-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Backend restore
+        run: |
+          set -o pipefail
+          dotnet restore backend/backend.sln 2>&1 | tee /tmp/backend-restore.log
+
+      - name: Backend build
+        run: |
+          set -o pipefail
+          dotnet build backend/backend.sln --no-restore 2>&1 | tee /tmp/backend-build.log
+
+      - name: Backend build log warnings
+        if: always()
+        run: |
+          warn_count=$(grep -Ec ' warning ' /tmp/backend-build.log || true)
+          if [ "$warn_count" -gt 0 ]; then
+            echo "::warning title=Backend compiler warnings::Detected $warn_count warning(s) during dotnet build"
+          fi
+
+      - name: Backend tests
+        run: |
+          set -o pipefail
+          dotnet test backend/backend.sln --no-build --logger "trx;LogFileName=backend-tests.trx" 2>&1 | tee /tmp/backend-test.log
+
+      - name: Backend test log warnings
+        if: always()
+        run: |
+          suspicious_count=$(grep -Eic "deprecated|obsolete|possible null reference|nullable|warning" /tmp/backend-test.log || true)
+          if [ "$suspicious_count" -gt 0 ]; then
+            echo "::warning title=Backend test log warnings::Detected $suspicious_count suspicious log line(s) in dotnet test output"
+          fi
+
+      - name: Backend smoke test via compose
+        run: |
+          set -o pipefail
+          docker compose -f Infrastructure/compose/docker-compose.ci.yml up -d --build backend
+
+          healthy=0
+          for i in {1..30}; do
+            if curl -fsS http://localhost:8080/health/live >/dev/null; then
+              healthy=1
+              break
+            fi
+            sleep 2
+          done
+
+          if [ "$healthy" -ne 1 ]; then
+            docker compose -f Infrastructure/compose/docker-compose.ci.yml ps
+            docker compose -f Infrastructure/compose/docker-compose.ci.yml logs backend
+            echo "Backend healthcheck failed within timeout"
+            exit 1
+          fi
+
+      - name: Backend runtime log warnings
+        if: always()
+        run: |
+          docker compose -f Infrastructure/compose/docker-compose.ci.yml logs backend > /tmp/backend-runtime.log 2>&1 || true
+          suspicious_count=$(grep -Eic "exception|critical|segmentation fault|fatal|warn" /tmp/backend-runtime.log || true)
+          if [ "$suspicious_count" -gt 0 ]; then
+            echo "::warning title=Backend runtime log warnings::Detected $suspicious_count suspicious log line(s) in backend container logs"
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker compose \
+            -f Infrastructure/compose/docker-compose.ci.yml \
+            down -v --remove-orphans

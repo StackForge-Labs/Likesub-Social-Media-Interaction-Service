@@ -1,41 +1,22 @@
 services:
   backend:
-    image: ${BACKEND_IMAGE:-likesub-backend-dev:local}
+    image: minhtri269/likesub-backend:dev-latest
     build:
       context: ../..
       dockerfile: Infrastructure/docker/backend.dev.Dockerfile
-    container_name: ${BACKEND_CONTAINER_NAME:-likesub-backend-dev}
+    container_name: likesub-backend-dev
     ports:
-      - "${BACKEND_HOST_PORT:-8080}:${BACKEND_CONTAINER_PORT:-8080}"
+      - "8080:8080"
     volumes:
       - ../../backend:/app
       - backend_bin:/app/bin
       - backend_obj:/app/obj
     environment:
-      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
-      ASPNETCORE_HTTP_PORTS: "${BACKEND_CONTAINER_PORT:-8080}"
-      Http__EnforceHttps: "${HTTP_ENFORCE_HTTPS:-false}"
-      DOTNET_USE_POLLING_FILE_WATCHER: "${DOTNET_USE_POLLING_FILE_WATCHER:-true}"
-      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "${DOTNET_WATCH_RESTART_ON_RUDE_EDIT:-true}"
-      Database__Provider: ${DATABASE_PROVIDER:-mysql}
-      Database__ConnectionString: ${DATABASE_CONNECTION_STRING:-server=mysql-db;port=3306;database=Likesub_Social_Media_Interaction;user=likesub;password=likesub_pass;}
-      Database__ServerVersion: ${DATABASE_SERVER_VERSION:-8.0.0}
-      Database__EnableSensitiveDataLogging: "${DATABASE_ENABLE_SENSITIVE_DATA_LOGGING:-true}"
-      Database__MaxRetryCount: "${DATABASE_MAX_RETRY_COUNT:-10}"
-      Database__MaxRetryDelaySeconds: "${DATABASE_MAX_RETRY_DELAY_SECONDS:-5}"
-      Redis__Enabled: "${REDIS_ENABLED:-true}"
-      Redis__Host: ${REDIS_HOST:-redis}
-      Redis__Port: "${REDIS_PORT:-6379}"
-      Redis__Password: "${REDIS_PASSWORD:-}"
-      Redis__Database: "${REDIS_DATABASE:-0}"
-      Redis__InstancePrefix: ${REDIS_INSTANCE_PREFIX:-likesub:dev}
-      Redis__DefaultTtlSeconds: "${REDIS_DEFAULT_TTL_SECONDS:-300}"
-      Redis__ConnectTimeoutMs: "${REDIS_CONNECT_TIMEOUT_MS:-5000}"
-      Redis__SyncTimeoutMs: "${REDIS_SYNC_TIMEOUT_MS:-5000}"
-      Redis__ConnectRetry: "${REDIS_CONNECT_RETRY:-3}"
-      Redis__AbortOnConnectFail: "${REDIS_ABORT_ON_CONNECT_FAIL:-false}"
-      Redis__AllowAdmin: "${REDIS_ALLOW_ADMIN:-true}"
-      Redis__Ssl: "${REDIS_SSL:-false}"
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      Http__EnforceHttps: "false"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
     command: dotnet watch --project backend.csproj run --no-launch-profile
     depends_on:
       mysql-db:
@@ -43,7 +24,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:${BACKEND_CONTAINER_PORT:-8080}/health/live || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health/live || exit 1"]
       interval: 10s
       timeout: 3s
       retries: 10
@@ -53,18 +34,18 @@ services:
     restart: unless-stopped
 
   redis:
-    image: ${REDIS_IMAGE:-redis:7.2.5-alpine}
-    container_name: ${REDIS_CONTAINER_NAME:-likesub-redis-dev}
+    image: redis:7.2.5-alpine
+    container_name: likesub-redis-dev
     ports:
-      - "${REDIS_HOST_PORT:-6379}:${REDIS_PORT:-6379}"
+      - "6379:6379"
     volumes:
       - redis_data:/data
     command: >
       redis-server
       --appendonly yes
-      --requirepass ${REDIS_PASSWORD:-likesub_redis_pass}
+      --requirepass likesub_redis_pass
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASSWORD:-likesub_redis_pass} ping"]
+      test: ["CMD-SHELL", "redis-cli -a likesub_redis_pass ping"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -74,11 +55,11 @@ services:
     restart: unless-stopped
 
   redisinsight:
-    image: ${REDISINSIGHT_IMAGE:-redis/redisinsight:2.58}
-    container_name: ${REDISINSIGHT_CONTAINER_NAME:-likesub-redisinsight-dev}
+    image: redis/redisinsight:2.58
+    container_name: likesub-redisinsight-dev
     profiles: ["devtools"]
     ports:
-      - "${REDISINSIGHT_HOST_PORT:-5540}:5540"
+      - "5540:5540"
     depends_on:
       redis:
         condition: service_healthy
@@ -89,15 +70,15 @@ services:
     restart: unless-stopped
 
   mysql-db:
-    image: ${MYSQL_IMAGE:-mysql:8.0.36}
-    container_name: ${MYSQL_CONTAINER_NAME:-mysql-dev}
+    image: mysql:8.0.36
+    container_name: mysql-dev
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-Likesub_Social_Media_Interaction}
-      MYSQL_USER: ${MYSQL_USER:-likesub}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-likesub_pass}
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Likesub_Social_Media_Interaction
+      MYSQL_USER: likesub
+      MYSQL_PASSWORD: likesub_pass
     ports:
-      - "${MYSQL_HOST_PORT:-3306}:3306"
+      - "3306:3306"
     volumes:
       - mysql_data_dev:/var/lib/mysql
       - ../scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -105,7 +86,7 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p${MYSQL_ROOT_PASSWORD:-root}"]
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -proot"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -115,18 +96,17 @@ services:
     restart: unless-stopped
 
   phpmyadmin:
-    image: ${PHPMYADMIN_IMAGE:-phpmyadmin:5.2.1}
-    container_name: ${PHPMYADMIN_CONTAINER_NAME:-likesub-phpmyadmin-dev}
-    profiles: ["devtools"]
+    image: phpmyadmin:5.2.1
+    container_name: likesub-phpmyadmin-dev
     ports:
-      - "${PHPMYADMIN_HOST_PORT:-8070}:80"
+      - "8070:80"
     depends_on:
       mysql-db:
         condition: service_healthy
     environment:
       PMA_HOST: mysql-db
-      PMA_USER: ${MYSQL_USER:-likesub}
-      PMA_PASSWORD: ${MYSQL_PASSWORD:-likesub_pass}
+      PMA_USER: likesub
+      PMA_PASSWORD: likesub_pass
     networks:
       - likesub-network
     restart: unless-stopped
@@ -134,16 +114,16 @@ services:
 networks:
   likesub-network:
     driver: bridge
-    name: ${DEV_NETWORK_NAME:-likesub-dev-network}
+    name: likesub-dev-network
 
 volumes:
   backend_bin:
-    name: ${BACKEND_BIN_VOLUME:-backend_bin}
+    name: backend_bin
   backend_obj:
-    name: ${BACKEND_OBJ_VOLUME:-backend_obj}
+    name: backend_obj
   mysql_data_dev:
-    name: ${MYSQL_DATA_VOLUME:-mysql_data_dev}
+    name: mysql_data_dev
   redis_data:
-    name: ${REDIS_DATA_VOLUME:-redis_data}
+    name: redis_data
   redisinsight_data:
-    name: ${REDISINSIGHT_DATA_VOLUME:-redisinsight_data}
+    name: redisinsight_data
