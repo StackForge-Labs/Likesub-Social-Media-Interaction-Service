@@ -37,6 +37,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
+            ${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-latest
             ${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -44,4 +45,5 @@ jobs:
       - name: Publish image summary
         run: |
           echo "Backend image pushed:"
+          echo "${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-latest"
           echo "${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-${{ github.sha }}"
