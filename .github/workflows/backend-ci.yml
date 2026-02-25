@@ -68,7 +68,7 @@ jobs:
 
           healthy=0
           for i in {1..30}; do
-            if curl -fsS http://localhost:8080/health/live >/dev/null; then
+            if docker compose -f Infrastructure/compose/docker-compose.ci.yml exec -T backend curl -fsS http://localhost:8080/health/live >/dev/null; then
               healthy=1
               break
             fi
