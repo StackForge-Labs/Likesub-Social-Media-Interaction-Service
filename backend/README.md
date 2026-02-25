@@ -12,7 +12,7 @@ Modular Monolith là một ứng dụng duy nhất nhưng được chia thành c
 /
   Common/
   Infrastructure/
-    Persistence/
+    Database/
     Redis/
     Auth/
     Options/
@@ -65,7 +65,7 @@ HTTP Request -> Controller -> Service -> Repository -> Infrastructure -> Databas
 
 - Module không gọi implementation của module khác (chỉ gọi interface/contract nếu cần).
 - Infrastructure chỉ chứa hạ tầng, không chứa business logic.
-- `DbContext` chỉ nằm trong `Infrastructure/Persistence`, không truy cập trực tiếp từ Controller/Service.
+- `DbContext` chỉ nằm trong `Infrastructure/Database`, không truy cập trực tiếp từ Controller/Service.
 - Hiện chỉ hỗ trợ MySQL; vẫn giữ `Database:Provider` để mở rộng sau này.
 
 ## 6) Vì sao dễ tách microservice sau này
@@ -104,7 +104,7 @@ So với Microservices:
 - Không đặt Infrastructure vào đây.
 
 /Infrastructure
-- Mục đích: Hạ tầng kỹ thuật dùng chung (persistence, auth, cache, options).
+- Mục đích: Hạ tầng kỹ thuật dùng chung (database, auth, cache, options).
 - Không chứa nghiệp vụ.
 
 /Common
@@ -125,7 +125,7 @@ So với Microservices:
 2. Tạo `AuthModule.cs` để đăng ký DI.
 3. Tạo Controller + DTO + Validator.
 4. Tạo Service + Repository + interface và đăng ký DI.
-5. Bổ sung entity/configuration ở Persistence nếu cần.
+5. Bổ sung entity/configuration ở Database nếu cần.
 6. Thêm mapping/validation.
 7. Thêm test tối thiểu cho Service hoặc Repository.
 8. Cập nhật README nếu có quy ước mới.

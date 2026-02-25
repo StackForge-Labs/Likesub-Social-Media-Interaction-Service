@@ -1,0 +1,47 @@
+name: Build and Push Backend Image
+
+on:
+  push:
+    branches: ['dev']
+    paths:
+      - 'backend/*.csproj'
+      - 'Infrastructure/docker/backend.dev.Dockerfile'
+      - 'global.json'
+      - 'NuGet.config'
+      - 'Directory.Build.props'
+      - 'Directory.Build.targets'
+      - 'Directory.Packages.props'
+      - '.github/workflows/build-push-backend-image.yml'
+  workflow_dispatch:
+
+jobs:
+  build-push-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DockerHub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build and push backend dev image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Infrastructure/docker/backend.dev.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Publish image summary
+        run: |
+          echo "Backend image pushed:"
+          echo "${{ secrets.DOCKER_USERNAME }}/likesub-backend:dev-${{ github.sha }}"

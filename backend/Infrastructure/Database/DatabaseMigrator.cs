@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace backend.Infrastructure.Persistence;
+namespace backend.Infrastructure.Database;
 
 public static class DatabaseMigrator
 {

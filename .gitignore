@@ -6,6 +6,7 @@ appsettings.*.json
 
 .env
 !.env.example
+Infrastructure/env/.env*
 # ========================
 # OS / IDE
 # ========================
