@@ -1,0 +1,129 @@
+services:
+  backend:
+    image: minhtri269/likesub-backend:dev-latest
+    build:
+      context: ../..
+      dockerfile: Infrastructure/docker/backend.dev.Dockerfile
+    container_name: likesub-backend-dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../backend:/app
+      - backend_bin:/app/bin
+      - backend_obj:/app/obj
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: "8080"
+      Http__EnforceHttps: "false"
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+      DOTNET_WATCH_RESTART_ON_RUDE_EDIT: "true"
+    command: dotnet watch --project backend.csproj run --no-launch-profile
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health/live || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    networks:
+      - likesub-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7.2.5-alpine
+    container_name: likesub-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass likesub_redis_pass
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a likesub_redis_pass ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+    networks:
+      - likesub-network
+    restart: unless-stopped
+
+  redisinsight:
+    image: redis/redisinsight:2.58
+    container_name: likesub-redisinsight-dev
+    profiles: ["devtools"]
+    ports:
+      - "5540:5540"
+    depends_on:
+      redis:
+        condition: service_healthy
+    volumes:
+      - redisinsight_data:/data
+    networks:
+      - likesub-network
+    restart: unless-stopped
+
+  mysql-db:
+    image: mysql:8.0.36
+    container_name: mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Likesub_Social_Media_Interaction
+      MYSQL_USER: likesub
+      MYSQL_PASSWORD: likesub_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data_dev:/var/lib/mysql
+      - ../scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+    networks:
+      - likesub-network
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.1
+    container_name: likesub-phpmyadmin-dev
+    ports:
+      - "8070:80"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    environment:
+      PMA_HOST: mysql-db
+      PMA_USER: likesub
+      PMA_PASSWORD: likesub_pass
+    networks:
+      - likesub-network
+    restart: unless-stopped
+
+networks:
+  likesub-network:
+    driver: bridge
+    name: likesub-dev-network
+
+volumes:
+  backend_bin:
+    name: backend_bin
+  backend_obj:
+    name: backend_obj
+  mysql_data_dev:
+    name: mysql_data_dev
+  redis_data:
+    name: redis_data
+  redisinsight_data:
+    name: redisinsight_data

@@ -5,44 +5,71 @@ on:
     branches: ['dev']
     paths:
       - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
   pull_request:
     branches: ['dev']
     paths:
       - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
 
 jobs:
-  test:
+  frontend-ci:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend
-    
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
+
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-      
+
       - name: Install dependencies
         run: npm ci
-      
-      - name: Lint
-        run: npm run lint
-      
-      - name: Type check
-        run: npx tsc --noEmit
-      
-      - name: Build
-        run: npm run build
-        env:
-          NEXT_PUBLIC_API_URL: http://localhost:8000
-          NODE_ENV: production
-      
-      - name: Run tests
+        working-directory: frontend
+
+      - name: Frontend lint
         run: |
-          # Add test commands when available
-          echo "Frontend tests passed"
+          set -o pipefail
+          npm run lint 2>&1 | tee /tmp/frontend-lint.log
+        working-directory: frontend
+
+      - name: Frontend lint log warnings
+        if: always()
+        run: |
+          warn_count=$(grep -Eic 'warning' /tmp/frontend-lint.log || true)
+          if [ "$warn_count" -gt 0 ]; then
+            echo "::warning title=Frontend lint warnings::Detected $warn_count warning line(s) during lint"
+          fi
+        working-directory: frontend
+
+      - name: Frontend typecheck
+        run: |
+          set -o pipefail
+          npm run typecheck 2>&1 | tee /tmp/frontend-typecheck.log
+        working-directory: frontend
+
+      - name: Frontend typecheck log warnings
+        if: always()
+        run: |
+          warn_count=$(grep -Eic 'deprecated|obsolete|warning' /tmp/frontend-typecheck.log || true)
+          if [ "$warn_count" -gt 0 ]; then
+            echo "::warning title=Frontend typecheck warnings::Detected $warn_count warning line(s) during typecheck"
+          fi
+        working-directory: frontend
+
+      - name: Frontend build
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee /tmp/frontend-build.log
+        working-directory: frontend
+
+      - name: Frontend build log warnings
+        if: always()
+        run: |
+          warn_count=$(grep -Eic 'warning|deprecated|deopt' /tmp/frontend-build.log || true)
+          if [ "$warn_count" -gt 0 ]; then
+            echo "::warning title=Frontend build warnings::Detected $warn_count warning line(s) during frontend build"
+          fi
+        working-directory: frontend

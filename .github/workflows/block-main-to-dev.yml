@@ -5,13 +5,34 @@ on:
     branches:
       - dev
 
+permissions:
+  contents: read
+
 jobs:
   block-main:
     runs-on: ubuntu-latest
     steps:
-      - name: Check source branch
-        run: |
-          if [[ "${{ github.head_ref }}" == "main" && "${{ github.actor }}" != "InfinitriByLeminhtri" ]]; then
-            echo "❌ Only admin can merge main to dev"
-            exit 1
-            fi
+      - name: Check role for main to dev PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const headRef = context.payload.pull_request?.head?.ref;
+            if (headRef !== "main") {
+              core.info("Not a main -> dev PR, skipping policy check.");
+              return;
+            }
+
+            const username = context.actor;
+            const { data } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username
+            });
+
+            const permission = data.permission;
+            if (permission !== "admin") {
+              core.setFailed(`Only users with admin role can open main -> dev PR. Actor=${username}, role=${permission}`);
+              return;
+            }
+
+            core.info(`Role check passed for ${username} (${permission}).`);

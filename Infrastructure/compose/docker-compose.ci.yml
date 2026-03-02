@@ -1,0 +1,22 @@
+services:
+  backend:
+    image: likesub-backend-ci:local
+    build:
+      context: ../..
+      dockerfile: Infrastructure/docker/backend.ci.Dockerfile
+    pull_policy: never
+    container_name: likesub-backend-ci
+    environment:
+      ASPNETCORE_ENVIRONMENT: CI
+      ASPNETCORE_HTTP_PORTS: "8080"
+      Http__EnforceHttps: "false"
+      Database__Provider: mysql
+      Database__ConnectionString: "server=127.0.0.1;port=1;database=ci_dummy;user=ci_dummy;password=ci_dummy;"
+      Database__ServerVersion: 8.0.0
+      Redis__Enabled: "false"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health/live || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 20s

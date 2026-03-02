@@ -4,44 +4,25 @@
   "description": "**Edunext .NET** - Hệ thống quản lý mạng xã hội giáo dục được xây dựng theo kiến trúc microservices với .NET 8 và Next.js.",
   "scripts": {
     "//": "********************* DEVELOPMENT *********************",
-    "setup:dev": "node container/script/setup-env.js",
-    "dev": "npm run setup:dev && docker compose -p snms -f container/compose/docker-compose.dev.yml up",
-    "dev:up": "docker compose -p snms -f container/compose/docker-compose.dev.yml up -d",
-    "dev:down": "docker compose -p snms -f container/compose/docker-compose.dev.yml down",
-    "dev:build": "docker compose -p snms -f container/compose/docker-compose.dev.yml up --build",
-    "dev:rebuild": "docker compose -p snms -f container/compose/docker-compose.dev.yml up --build -d",
-    "dev:stop": "docker compose -p snms -f container/compose/docker-compose.dev.yml stop",
-    "dev:restart": "docker compose -p snms -f container/compose/docker-compose.dev.yml restart",
-    "dev:pull": "docker compose -p snms -f container/compose/docker-compose.dev.yml pull",
-    "dev:ps": "docker compose -p snms -f container/compose/docker-compose.dev.yml ps",
+    "setup:dev": "node Infrastructure/scripts/setup-env.js",
+    "dev": "npm run setup:dev && docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml up",
+    "dev:up": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml up -d",
+    "dev:down": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml down",
+    "dev:build": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml up --build",
+    "dev:rebuild": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml up --build -d",
+    "dev:stop": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml stop",
+    "dev:restart": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml restart",
+    "dev:pull": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml pull",
+    "dev:ps": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml ps",
     
     "//": "********************* SERVICE SHELL *********************",
-    "dev:gateway": "docker exec -it snms-gateway-dev sh",
-    "dev:user": "docker exec -it snms-user-dev sh",
-    "dev:social": "docker exec -it snms-social-dev sh",
-    "dev:redis": "docker exec -it snms-redis-dev redis-cli",
+    "dev:backend": "docker exec -it likesub-backend-dev sh",
+    "dev:redis": "docker exec -it likesub-redis-dev redis-cli",
     
     "//": "********************* LOGS *********************",
-    "dev:logs": "docker compose -p snms -f container/compose/docker-compose.dev.yml logs -f --tail=200",
-    "dev:log:gateway": "docker compose -p snms -f container/compose/docker-compose.dev.yml logs -f api-gateway",
-    "dev:log:user": "docker compose -p snms -f container/compose/docker-compose.dev.yml logs -f user-service",
-    "dev:log:social": "docker compose -p snms -f container/compose/docker-compose.dev.yml logs -f social-service",
-    "dev:log:redis": "docker compose -p snms -f container/compose/docker-compose.dev.yml logs -f redis",
-    
-    "//": "********************* FRONTEND (HOST) *********************",
-    "frontend:dev": "cd frontend && npm run dev",
-    "frontend:build": "cd frontend && npm run build",
-    "frontend:start": "cd frontend && npm start",
-    "frontend:lint": "cd frontend && npm run lint",
-    "frontend:install": "cd frontend && npm install",
-    
-    "//": "********************* PRODUCTION *********************",
-    "prod": "docker compose -p snms-prod -f container/compose/docker-compose.prod.yml up",
-    "prod:up": "docker compose -p snms-prod -f container/compose/docker-compose.prod.yml up -d",
-    "prod:down": "docker compose -p snms-prod -f container/compose/docker-compose.prod.yml down",
-    "prod:build": "docker compose -p snms-prod -f container/compose/docker-compose.prod.yml up --build -d",
-    "prod:logs": "docker compose -p snms-prod -f container/compose/docker-compose.prod.yml logs -f --tail=200",
-    
+    "dev:logs": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml logs -f --tail=200",
+    "dev:log:backend": "docker compose -p likesub -f Infrastructure/compose/docker-compose.dev.yml logs -f backend",
+
     "//": "********************* DOCKER UTILITIES *********************",
     "docker:ps": "docker ps -a",
     "docker:stop-all": "docker stop $(docker ps -aq) || true",
@@ -57,20 +38,18 @@
     "docker:clean-cache": "docker builder prune -af",
     
     "//": "********************* BUILD & SYNC *********************",
-    "build:local": "docker build -f container/dockerfiles/dev/gateway.dev-base.Dockerfile -t minhtri269/snms-api-gateway:dev-local backend/api-gateway && docker build -f container/dockerfiles/dev/user.dev-base.Dockerfile -t minhtri269/snms-user-service:dev-local backend/user-service && docker build -f container/dockerfiles/dev/social.dev-base.Dockerfile -t minhtri269/snms-social-service:dev-local backend/social-service",
-    "sync": "git pull && npm run dev:pull && npm run dev:up",
-    "health": "curl -f http://localhost:8000/health && curl -f http://localhost:3000 || echo 'Services not ready'"
+    "sync": "git pull && npm run dev:pull && npm run dev:build"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Aptech-Eproject/Social-network-service-management-system.git"
+    "url": "git+https://github.com/Aptech-Eproject/Likesub-Social-Media-Interaction-Service.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/Aptech-Eproject/Social-network-service-management-system/issues"
+    "url": "https://github.com/Aptech-Eproject/Likesub-Social-Media-Interaction-Service/issues"
   },
-  "homepage": "https://github.com/Aptech-Eproject/Social-network-service-management-system#readme"
+  "homepage": "https://github.com/Aptech-Eproject/Likesub-Social-Media-Interaction-Service#readme"
 }
