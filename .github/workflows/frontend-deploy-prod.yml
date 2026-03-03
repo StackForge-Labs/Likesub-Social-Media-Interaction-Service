@@ -1,0 +1,16 @@
+name: Deploy Vercel (prod)
+
+on:
+    push:
+        branches: ["main"]
+        paths:
+            - "frontend/**"
+    workflow_dispatch:
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Trigger Vercel Deploy Hook
+              run: |
+                curl -fsSL -X POST --max-time 30 "${{ secrets.VERCEL_DEPLOY_HOOK_PROD }}"
