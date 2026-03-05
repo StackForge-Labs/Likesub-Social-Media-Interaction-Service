@@ -8,25 +8,12 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
       ASPNETCORE_HTTP_PORTS: "${BACKEND_CONTAINER_PORT:-8080}"
       Http__EnforceHttps: "${HTTP_ENFORCE_HTTPS:-true}"
-      Database__Provider: ${DATABASE_PROVIDER:-mysql}
       Database__ConnectionString: ${DATABASE_CONNECTION_STRING:?DATABASE_CONNECTION_STRING is required}
       Database__ServerVersion: ${DATABASE_SERVER_VERSION:-8.0.0}
-      Database__EnableSensitiveDataLogging: "${DATABASE_ENABLE_SENSITIVE_DATA_LOGGING:-false}"
-      Database__MaxRetryCount: "${DATABASE_MAX_RETRY_COUNT:-5}"
-      Database__MaxRetryDelaySeconds: "${DATABASE_MAX_RETRY_DELAY_SECONDS:-5}"
       Redis__Enabled: "${REDIS_ENABLED:-true}"
-      Redis__Host: ${REDIS_HOST:?REDIS_HOST is required}
-      Redis__Port: "${REDIS_PORT:-6379}"
-      Redis__Password: "${REDIS_PASSWORD:-}"
-      Redis__Database: "${REDIS_DATABASE:-0}"
+      Redis__ConnectionString: ${REDIS_CONNECTION_STRING:-redis:6379,abortConnect=false}
       Redis__InstancePrefix: ${REDIS_INSTANCE_PREFIX:-likesub:prod}
       Redis__DefaultTtlSeconds: "${REDIS_DEFAULT_TTL_SECONDS:-300}"
-      Redis__ConnectTimeoutMs: "${REDIS_CONNECT_TIMEOUT_MS:-5000}"
-      Redis__SyncTimeoutMs: "${REDIS_SYNC_TIMEOUT_MS:-5000}"
-      Redis__ConnectRetry: "${REDIS_CONNECT_RETRY:-3}"
-      Redis__AbortOnConnectFail: "${REDIS_ABORT_ON_CONNECT_FAIL:-false}"
-      Redis__AllowAdmin: "${REDIS_ALLOW_ADMIN:-false}"
-      Redis__Ssl: "${REDIS_SSL:-false}"
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:${BACKEND_CONTAINER_PORT:-8080}/health/live || exit 1"]
       interval: 15s

@@ -1,26 +1,73 @@
 using backend.Infrastructure.Database;
 using backend.Infrastructure.Redis;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Configuration.AddEnvironmentVariables();
-// Add services to the container.
+
+// Services
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHealthChecks()
-    .AddCheck(
-        "self",
-        () => HealthCheckResult.Healthy(),
-        tags: new[] { "live", "ready" });
 
+// Infrastructure
 builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
 
+// Health checks: live vs ready
+var redisEnabled = builder.Configuration.GetValue("Redis:Enabled", true);
+var redisConnectionString = builder.Configuration["Redis:ConnectionString"];
+
+var healthChecks = builder.Services.AddHealthChecks()
+    .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "live" })
+    .AddDbContextCheck<ApplicationDbContext>(
+        name: "db",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: new[] { "ready" })
+    .AddCheck<DatabaseMigrationHealthCheck>(
+        name: "db-migrations",
+        failureStatus: HealthStatus.Unhealthy,
+        tags: new[] { "ready" });
+
+if (redisEnabled)
+{
+    if (!string.IsNullOrWhiteSpace(redisConnectionString))
+    {
+        healthChecks.AddRedis(
+            redisConnectionString: redisConnectionString,
+            name: "redis",
+            failureStatus: HealthStatus.Unhealthy,
+            tags: new[] { "ready" });
+    }
+    else
+    {
+        healthChecks.AddCheck(
+            name: "redis-config",
+            check: () => HealthCheckResult.Unhealthy("Redis is enabled but Redis:ConnectionString is missing."),
+            tags: new[] { "ready" });
+    }
+}
+else
+{
+    healthChecks.AddCheck(
+        name: "redis-disabled",
+        check: () => HealthCheckResult.Healthy("Redis is disabled."),
+        tags: new[] { "ready" });
+}
+
 var app = builder.Build();
 
+// Proxy-safe (prod behind reverse proxy)
+var useForwardedHeaders = app.Configuration.GetValue("Http:UseForwardedHeaders", !app.Environment.IsDevelopment());
+if (useForwardedHeaders)
+{
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+    });
+}
 
 if (app.Environment.IsDevelopment())
 {
@@ -28,29 +75,37 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// HTTPS redirection policy
 var enforceHttps = app.Configuration.GetValue("Http:EnforceHttps", !app.Environment.IsDevelopment());
 if (enforceHttps)
 {
     app.UseHttpsRedirection();
 }
 
-app.MapHealthChecks(
-    "/health/live",
-    new HealthCheckOptions
-    {
-        Predicate = check => check.Tags.Contains("live"),
-    });
-app.MapHealthChecks(
-    "/health/ready",
-    new HealthCheckOptions
-    {
-        Predicate = check => check.Tags.Contains("ready"),
-    });
+app.MapHealthChecks("/health/live", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("live"),
+});
+app.MapHealthChecks("/health/ready", new HealthCheckOptions
+{
+    Predicate = check => check.Tags.Contains("ready"),
+});
+
 app.MapControllers();
 
-var shouldRunMigrations = app.Environment.IsDevelopment()
-    || args.Any(arg => string.Equals(arg, "--migration", StringComparison.OrdinalIgnoreCase));
+// Migration modes
+var migrateOnly = args.Any(a => a.Equals("--migrate-only", StringComparison.OrdinalIgnoreCase));
+var migrateAndRun = args.Any(a => a.Equals("--migrate", StringComparison.OrdinalIgnoreCase));
 
-app.ApplyMigrationsIfNeeded(shouldRunMigrations);
+var shouldRunMigrations =
+    app.Environment.IsDevelopment() || migrateOnly || migrateAndRun;
+
+// Run migrations based on startup mode (with lock + retry).
+app.ApplyMigrationsIfNeeded(shouldRunMigrations, throwOnFailure: migrateOnly);
+
+if (migrateOnly)
+{
+    return;
+}
 
 app.Run();
