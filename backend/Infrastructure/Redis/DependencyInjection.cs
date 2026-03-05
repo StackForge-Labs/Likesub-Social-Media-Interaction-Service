@@ -11,11 +11,11 @@ public static class DependencyInjection
         services.AddOptions<RedisOptions>()
             .Bind(configuration.GetSection(RedisOptions.SectionName))
             .Validate(
-                options => !options.Enabled || !string.IsNullOrWhiteSpace(options.Host),
-                "Redis:Host is required when Redis is enabled.")
+                options => !options.Enabled || !string.IsNullOrWhiteSpace(options.ConnectionString),
+                "Redis:ConnectionString is required when Redis is enabled.")
             .Validate(
-                options => !options.Enabled || options.Port is > 0 and <= 65535,
-                "Redis:Port must be in range 1..65535 when Redis is enabled.")
+                options => options.DefaultTtlSeconds is > 0 and <= 86400,
+                "Redis:DefaultTtlSeconds must be between 1 and 86400.")
             .ValidateOnStart();
 
         services.AddSingleton<ICacheKeyFactory, CacheKeyFactory>();

@@ -15,4 +15,4 @@ Logic nghiệp vụ, validation, hoặc xử lý request/response.
 **Rules**
 - Repository chỉ làm việc với DbContext và entities.
 - Controller/Service không truy cập DbContext trực tiếp.
-- Migrations tự chạy khi `ASPNETCORE_ENVIRONMENT=Development`, prod chỉ chạy khi có `--migration`.
+- Migrations tự chạy ở `Development`, production chỉ chạy khi có cờ `--migrate` hoặc `--migrate-only`.
