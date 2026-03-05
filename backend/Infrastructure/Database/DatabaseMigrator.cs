@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace backend.Infrastructure.Database;
@@ -26,10 +27,12 @@ public static class DatabaseMigrator
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         const string lockName = "backend_db_migration_lock";
         var lockAcquired = false;
+        var openedMigrationConnection = false;
 
         try
         {
             WaitForDatabase(db, logger);
+            openedMigrationConnection = TryOpenMigrationConnection(db);
 
             lockAcquired = TryAcquireMySqlLock(db, lockName, timeoutSeconds: 30, logger);
             if (!lockAcquired)
@@ -70,6 +73,11 @@ public static class DatabaseMigrator
             {
                 ReleaseMySqlLock(db, lockName, logger);
             }
+
+            if (openedMigrationConnection)
+            {
+                TryCloseMigrationConnection(db, logger);
+            }
         }
     }
 
@@ -104,8 +112,6 @@ public static class DatabaseMigrator
         ILogger logger)
     {
         var conn = db.Database.GetDbConnection();
-        if (conn.State != System.Data.ConnectionState.Open)
-            conn.Open();
 
         using var cmd = conn.CreateCommand();
         cmd.CommandText = "SELECT GET_LOCK(@name, @timeout);";
@@ -132,8 +138,6 @@ public static class DatabaseMigrator
         try
         {
             var conn = db.Database.GetDbConnection();
-            if (conn.State != System.Data.ConnectionState.Open)
-                conn.Open();
 
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "SELECT RELEASE_LOCK(@name);";
@@ -149,6 +153,34 @@ public static class DatabaseMigrator
         catch (Exception ex)
         {
             logger.LogWarning(ex, "Failed to release migration lock.");
+        }
+    }
+
+    private static bool TryOpenMigrationConnection(ApplicationDbContext db)
+    {
+        var conn = db.Database.GetDbConnection();
+        if (conn.State == System.Data.ConnectionState.Open)
+        {
+            return false;
+        }
+
+        conn.Open();
+        return true;
+    }
+
+    private static void TryCloseMigrationConnection(ApplicationDbContext db, ILogger logger)
+    {
+        try
+        {
+            var conn = db.Database.GetDbConnection();
+            if (conn.State != System.Data.ConnectionState.Closed)
+            {
+                conn.Close();
+            }
+        }
+        catch (Exception exception)
+        {
+            logger.LogDebug(exception, "Failed to close migration connection cleanly.");
         }
     }
 }

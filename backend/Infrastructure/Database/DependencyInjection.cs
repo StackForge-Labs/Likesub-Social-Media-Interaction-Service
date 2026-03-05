@@ -60,9 +60,9 @@ public static class DependencyInjection
         ILogger logger)
     {
         var serverVersion = ResolveServerVersion(db, env, logger);
-        var commandTimeout = Math.Clamp(DefaultCommandTimeoutSeconds, 5, 300);
-        var retryCount = Math.Clamp(DefaultRetryCount, 0, 10);
-        var retryDelay = TimeSpan.FromSeconds(Math.Clamp(DefaultRetryDelaySeconds, 1, 60));
+        var commandTimeout = DefaultCommandTimeoutSeconds;
+        var retryCount = DefaultRetryCount;
+        var retryDelay = TimeSpan.FromSeconds(DefaultRetryDelaySeconds);
 
         options.UseMySql(
             db.ConnectionString,
