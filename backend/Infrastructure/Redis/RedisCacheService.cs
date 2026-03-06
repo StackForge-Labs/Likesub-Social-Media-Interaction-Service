@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Text.Json;
 using backend.Infrastructure.Options;
 using Microsoft.Extensions.Options;
@@ -8,12 +9,18 @@ namespace backend.Infrastructure.Redis;
 internal sealed class RedisCacheService(
     IRedisConnectionProvider connectionProvider,
     IOptions<RedisOptions> options,
-    ICacheKeyFactory cacheKeyFactory,
+    IHostEnvironment environment,
     ILogger<RedisCacheService> logger) : ICacheService
 {
     private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
+    private static readonly TimeSpan WarningCooldown = TimeSpan.FromSeconds(30);
+
     private readonly RedisOptions _options = options.Value;
-    private readonly TimeSpan _defaultTtl = TimeSpan.FromSeconds(Math.Max(options.Value.DefaultTtlSeconds, 1));
+    private readonly TimeSpan _defaultTtl = TimeSpan.FromSeconds(Math.Clamp(options.Value.DefaultTtlSeconds, 1, 86400));
+    private readonly ConcurrentDictionary<string, SemaphoreSlim> _keyLocks = new(StringComparer.OrdinalIgnoreCase);
+    private long _nextUnavailableWarningTicks;
+    private long _nextOperationWarningTicks;
+    private int _unsafePrefixScanLogged;
 
     public async Task<T?> GetAsync<T>(string key)
     {
@@ -42,10 +49,7 @@ internal sealed class RedisCacheService(
         }
         catch (Exception exception)
         {
-            logger.LogWarning(
-                exception,
-                "Cache SET failed for key {Key}. Request will continue without cache.",
-                key);
+            LogOperationFailureThrottled(exception, nameof(SetAsync), key);
         }
     }
 
@@ -57,15 +61,36 @@ internal sealed class RedisCacheService(
             return cachedValue!;
         }
 
-        logger.LogDebug("Cache miss for key {Key}. Loading from source.", key);
-        var sourceValue = await factory();
+        var redisKey = ToRedisKey(key);
+        var keyLock = _keyLocks.GetOrAdd(redisKey, _ => new SemaphoreSlim(1, 1));
 
-        if (sourceValue is not null)
+        await keyLock.WaitAsync();
+        try
         {
-            await SetAsync(key, sourceValue, ttl);
-        }
+            (isHit, cachedValue) = await TryGetAsync<T>(key);
+            if (isHit)
+            {
+                return cachedValue!;
+            }
 
-        return sourceValue;
+            logger.LogDebug("Cache miss for key {Key}. Loading from source.", key);
+            var sourceValue = await factory();
+
+            if (sourceValue is not null)
+            {
+                await SetAsync(key, sourceValue, ttl);
+            }
+
+            return sourceValue;
+        }
+        finally
+        {
+            keyLock.Release();
+            if (keyLock.CurrentCount == 1)
+            {
+                _keyLocks.TryRemove(redisKey, out _);
+            }
+        }
     }
 
     public async Task RemoveAsync(string key)
@@ -82,27 +107,44 @@ internal sealed class RedisCacheService(
         }
         catch (Exception exception)
         {
-            logger.LogWarning(
-                exception,
-                "Cache REMOVE failed for key {Key}. Request will continue without cache.",
-                key);
+            LogOperationFailureThrottled(exception, nameof(RemoveAsync), key);
         }
     }
 
     public async Task RemoveByPrefixAsync(string prefix)
     {
+        if (string.IsNullOrWhiteSpace(prefix))
+        {
+            return;
+        }
+
+        if (!_options.Enabled)
+        {
+            return;
+        }
+
+        if (!_options.EnableUnsafePrefixScan || !environment.IsDevelopment())
+        {
+            if (Interlocked.CompareExchange(ref _unsafePrefixScanLogged, 1, 0) == 0)
+            {
+                logger.LogWarning(
+                    "RemoveByPrefixAsync is disabled by default. Enable Redis:EnableUnsafePrefixScan=true in Development only if required.");
+            }
+
+            return;
+        }
+
         var connection = await connectionProvider.GetConnectionAsync();
         if (connection is null || !connection.IsConnected)
         {
-            logger.LogWarning(
-                "Redis unavailable. Skip prefix invalidation for {Prefix}.",
-                prefix);
+            LogRedisUnavailableThrottled(nameof(RemoveByPrefixAsync), prefix);
             return;
         }
 
         try
         {
-            var database = connection.GetDatabase(_options.Database);
+            var database = connection.GetDatabase();
+            var databaseIndex = database.Database >= 0 ? database.Database : 0;
             var keyPattern = $"{ToRedisKey(prefix)}*";
             long removedCount = 0;
 
@@ -114,7 +156,7 @@ internal sealed class RedisCacheService(
                     continue;
                 }
 
-                var keys = server.Keys(_options.Database, keyPattern, pageSize: 500).ToArray();
+                var keys = server.Keys(databaseIndex, keyPattern, pageSize: 500).ToArray();
                 if (keys.Length == 0)
                 {
                     continue;
@@ -123,76 +165,32 @@ internal sealed class RedisCacheService(
                 removedCount += await database.KeyDeleteAsync(keys);
             }
 
-            logger.LogInformation(
-                "Removed {Count} keys by prefix {Prefix}.",
-                removedCount,
-                prefix);
+            logger.LogInformation("Removed {Count} keys by prefix {Prefix}.", removedCount, prefix);
         }
         catch (Exception exception)
         {
-            logger.LogWarning(
-                exception,
-                "Prefix invalidation failed for {Prefix}.",
-                prefix);
+            LogOperationFailureThrottled(exception, nameof(RemoveByPrefixAsync), prefix);
         }
     }
 
-    public async Task<long> GetVersionAsync(string module, string entity)
+    [Obsolete("Cache versioning is disabled. This method always returns 1.")]
+    public Task<long> GetVersionAsync(string module, string entity)
     {
-        var versionKey = cacheKeyFactory.BuildVersionKey(module, entity);
-        var database = await GetDatabaseAsync(nameof(GetVersionAsync), versionKey);
-        if (database is null)
-        {
-            return 1;
-        }
-
-        try
-        {
-            var redisKey = ToRedisKey(versionKey);
-            var redisValue = await database.StringGetAsync(redisKey);
-            if (redisValue.HasValue && long.TryParse(redisValue.ToString(), out var version) && version > 0)
-            {
-                return version;
-            }
-
-            await database.StringSetAsync(redisKey, 1, when: When.NotExists);
-            return 1;
-        }
-        catch (Exception exception)
-        {
-            logger.LogWarning(
-                exception,
-                "Version lookup failed for module {Module}, entity {Entity}. Using version 1.",
-                module,
-                entity);
-            return 1;
-        }
+        logger.LogDebug(
+            "Cache versioning is disabled. Returning version=1 for {Module}/{Entity}.",
+            module,
+            entity);
+        return Task.FromResult(1L);
     }
 
-    public async Task<long> BumpVersionAsync(string module, string entity)
+    [Obsolete("Cache versioning is disabled. This method always returns 1.")]
+    public Task<long> BumpVersionAsync(string module, string entity)
     {
-        var versionKey = cacheKeyFactory.BuildVersionKey(module, entity);
-        var database = await GetDatabaseAsync(nameof(BumpVersionAsync), versionKey);
-        if (database is null)
-        {
-            return 1;
-        }
-
-        try
-        {
-            var redisKey = ToRedisKey(versionKey);
-            var nextVersion = await database.StringIncrementAsync(redisKey);
-            return Math.Max((long)nextVersion, 1);
-        }
-        catch (Exception exception)
-        {
-            logger.LogWarning(
-                exception,
-                "Version bump failed for module {Module}, entity {Entity}.",
-                module,
-                entity);
-            return 1;
-        }
+        logger.LogDebug(
+            "Cache versioning is disabled. Returning version=1 for {Module}/{Entity}.",
+            module,
+            entity);
+        return Task.FromResult(1L);
     }
 
     private async Task<(bool IsHit, T? Value)> TryGetAsync<T>(string key)
@@ -222,10 +220,7 @@ internal sealed class RedisCacheService(
         }
         catch (Exception exception)
         {
-            logger.LogWarning(
-                exception,
-                "Cache GET failed for key {Key}.",
-                key);
+            LogOperationFailureThrottled(exception, nameof(GetAsync), key);
             return (false, default);
         }
     }
@@ -240,14 +235,66 @@ internal sealed class RedisCacheService(
         var connection = await connectionProvider.GetConnectionAsync();
         if (connection is null || !connection.IsConnected)
         {
-            logger.LogWarning(
-                "Redis unavailable. Cache miss fallback for operation {Operation}, key {Key}.",
-                operation,
-                key);
+            LogRedisUnavailableThrottled(operation, key);
             return null;
         }
 
-        return connection.GetDatabase(_options.Database);
+        return connection.GetDatabase();
+    }
+
+    private void LogRedisUnavailableThrottled(string operation, string key)
+    {
+        if (TryOpenLogWindow(ref _nextUnavailableWarningTicks, WarningCooldown))
+        {
+            logger.LogWarning(
+                "Redis unavailable. Cache fallback for operation {Operation}, key {Key}.",
+                operation,
+                key);
+            return;
+        }
+
+        logger.LogDebug(
+            "Redis unavailable. Cache fallback for operation {Operation}, key {Key}.",
+            operation,
+            key);
+    }
+
+    private void LogOperationFailureThrottled(Exception exception, string operation, string key)
+    {
+        if (TryOpenLogWindow(ref _nextOperationWarningTicks, WarningCooldown))
+        {
+            logger.LogWarning(
+                exception,
+                "Cache operation {Operation} failed for key {Key}. Request will continue without cache.",
+                operation,
+                key);
+            return;
+        }
+
+        logger.LogDebug(
+            exception,
+            "Cache operation {Operation} failed for key {Key}. Request will continue without cache.",
+            operation,
+            key);
+    }
+
+    private static bool TryOpenLogWindow(ref long nextLogTicks, TimeSpan cooldown)
+    {
+        while (true)
+        {
+            var nowTicks = DateTimeOffset.UtcNow.UtcTicks;
+            var currentWindowEnd = Interlocked.Read(ref nextLogTicks);
+            if (nowTicks < currentWindowEnd)
+            {
+                return false;
+            }
+
+            var nextWindowEnd = nowTicks + cooldown.Ticks;
+            if (Interlocked.CompareExchange(ref nextLogTicks, nextWindowEnd, currentWindowEnd) == currentWindowEnd)
+            {
+                return true;
+            }
+        }
     }
 
     private string ToRedisKey(string key)
@@ -258,12 +305,12 @@ internal sealed class RedisCacheService(
             return normalizedKey;
         }
 
-        var prefix = _options.InstancePrefix.Trim().Trim(':').ToLowerInvariant();
+        var prefix = _options.InstancePrefix.Trim().Trim(':');
         if (normalizedKey.StartsWith($"{prefix}:", StringComparison.OrdinalIgnoreCase))
         {
-            return normalizedKey.ToLowerInvariant();
+            return normalizedKey;
         }
 
-        return $"{prefix}:{normalizedKey}".ToLowerInvariant();
+        return $"{prefix}:{normalizedKey}";
     }
 }

@@ -10,7 +10,9 @@ public interface ICacheKeyFactory
 
     string BuildListKey(string module, string entity, string rawQuery);
 
+    [Obsolete("Cache versioning is disabled.")]
     string BuildVersionKey(string module, string entity);
 
+    [Obsolete("Cache versioning is disabled.")]
     string BuildVersionedKey(string module, string entity, long version, string scope, string hash);
 }

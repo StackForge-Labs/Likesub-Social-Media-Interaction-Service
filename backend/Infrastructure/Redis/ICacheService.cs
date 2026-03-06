@@ -12,7 +12,9 @@ public interface ICacheService
 
     Task RemoveByPrefixAsync(string prefix);
 
+    [Obsolete("Cache versioning is disabled. This method always returns 1.")]
     Task<long> GetVersionAsync(string module, string entity);
 
+    [Obsolete("Cache versioning is disabled. This method always returns 1.")]
     Task<long> BumpVersionAsync(string module, string entity);
 }

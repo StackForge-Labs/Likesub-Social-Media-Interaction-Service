@@ -55,16 +55,17 @@ services:
     restart: unless-stopped
 
   redisinsight:
-    image: redis/redisinsight:2.58
+    image: redis/redisinsight:2.70.1
     container_name: likesub-redisinsight-dev
     ports:
       - "5540:5540"
     environment:
       RI_ACCEPT_TERMS_AND_CONDITIONS: "true"
-      RI_REDIS_HOST: redis
-      RI_REDIS_PORT: "6379"
-      RI_REDIS_ALIAS: likesub-redis-dev
-      RI_REDIS_PASSWORD: likesub_redis_pass
+      RI_REDIS_HOST_0: redis
+      RI_REDIS_PORT_0: "6379"
+      RI_REDIS_ALIAS_0: likesub-redis-dev
+      RI_REDIS_USERNAME_0: default
+      RI_REDIS_PASSWORD_0: likesub_redis_pass
     depends_on:
       redis:
         condition: service_healthy

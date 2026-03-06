@@ -39,11 +39,13 @@ public sealed class CacheKeyFactory : ICacheKeyFactory
         return BuildKey(module, entity, "list", ComputeHash(rawQuery));
     }
 
+    [Obsolete("Cache versioning is disabled.")]
     public string BuildVersionKey(string module, string entity)
     {
         return string.Join(":", NormalizeToken(module), NormalizeToken(entity), "version");
     }
 
+    [Obsolete("Cache versioning is disabled.")]
     public string BuildVersionedKey(string module, string entity, long version, string scope, string hash)
     {
         return string.Join(

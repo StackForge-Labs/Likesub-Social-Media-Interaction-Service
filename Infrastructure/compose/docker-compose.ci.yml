@@ -10,7 +10,7 @@ services:
       ASPNETCORE_ENVIRONMENT: CI
       ASPNETCORE_HTTP_PORTS: "8080"
       Http__EnforceHttps: "false"
-      Database__Provider: mysql
+      Cors__Enabled: "false"
       Database__ConnectionString: "server=127.0.0.1;port=1;database=ci_dummy;user=ci_dummy;password=ci_dummy;"
       Database__ServerVersion: 8.0.0
       Redis__Enabled: "false"
