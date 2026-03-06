@@ -10,7 +10,7 @@ Options classes và validation cho các section cấu hình.
 Logic nghiệp vụ hoặc service implementations.
 
 **Examples**
-`DatabaseOptions.cs`, `RedisOptions.cs`.
+`DatabaseOptions.cs`, `RedisOptions.cs`, `CorsOptions.cs`.
 
 **Rules**
 - Mỗi options map 1 section trong cấu hình.

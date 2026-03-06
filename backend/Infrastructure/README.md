@@ -25,6 +25,7 @@ Logic nghiệp vụ hoặc code theo module.
 
 ### 1) Đăng ký Infrastructure trong `Program.cs`
 ```csharp
+builder.Services.AddAppCors(builder.Configuration);
 builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
 ```
@@ -32,6 +33,10 @@ builder.Services.AddDatabase(builder.Configuration);
 ### 2) Cấu hình tối giản (appsettings hoặc env vars)
 ```json
 {
+  "Cors": {
+    "Enabled": true,
+    "AllowedOrigins": [ "http://localhost:3000" ]
+  },
   "Database": {
     "ConnectionString": "server=mysql-db;port=3306;database=Likesub_Social_Media_Interaction;user=likesub;password=likesub_pass;",
     "ServerVersion": "8.0.0"
@@ -46,6 +51,11 @@ builder.Services.AddDatabase(builder.Configuration);
 ```
 
 Env vars tương đương:
+- `Cors__Enabled`
+- `Cors__AllowedOrigins__0`
+- `Cors__AllowedOrigins__1`
+- `Cors__AllowCredentials`
+- `Cors__PreflightMaxAgeSeconds`
 - `Database__ConnectionString`
 - `Database__ServerVersion`
 - `Redis__Enabled`
