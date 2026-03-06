@@ -8,6 +8,12 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
       ASPNETCORE_HTTP_PORTS: "${BACKEND_CONTAINER_PORT:-8080}"
       Http__EnforceHttps: "${HTTP_ENFORCE_HTTPS:-true}"
+      Cors__Enabled: "${CORS_ENABLED:-false}"
+      Cors__PolicyName: "${CORS_POLICY_NAME:-AppCors}"
+      Cors__AllowedOrigins__0: "${CORS_ALLOWED_ORIGIN_0:-}"
+      Cors__AllowedOrigins__1: "${CORS_ALLOWED_ORIGIN_1:-}"
+      Cors__AllowCredentials: "${CORS_ALLOW_CREDENTIALS:-true}"
+      Cors__PreflightMaxAgeSeconds: "${CORS_PREFLIGHT_MAX_AGE_SECONDS:-600}"
       Database__ConnectionString: ${DATABASE_CONNECTION_STRING:?DATABASE_CONNECTION_STRING is required}
       Database__ServerVersion: ${DATABASE_SERVER_VERSION:-8.0.0}
       Redis__Enabled: "${REDIS_ENABLED:-true}"

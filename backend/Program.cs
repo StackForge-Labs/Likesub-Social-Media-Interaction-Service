@@ -1,4 +1,5 @@
 using backend.Infrastructure.Database;
+using backend.Infrastructure.Cors;
 using backend.Infrastructure.Redis;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -13,6 +14,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Infrastructure
+builder.Services.AddAppCors(builder.Configuration);
 builder.Services.AddCaching(builder.Configuration);
 builder.Services.AddDatabase(builder.Configuration);
 
@@ -81,6 +83,8 @@ if (enforceHttps)
 {
     app.UseHttpsRedirection();
 }
+
+app.UseAppCors();
 
 app.MapHealthChecks("/health/live", new HealthCheckOptions
 {
