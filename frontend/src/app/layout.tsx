@@ -7,7 +7,7 @@ import Providers from "@/provider";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next"
 
-export const runtime = 'edge';
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
