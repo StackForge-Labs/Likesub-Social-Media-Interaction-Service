@@ -4,8 +4,10 @@ import { inter } from "@/font";
 import { Geist, Geist_Mono } from "next/font/google";
 import type { Metadata } from "next";
 import Providers from "@/provider";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next"
 
-export const runtime = 'edge';
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -115,6 +117,8 @@ export default function RootLayout({
         <Providers>
           {children}
         </Providers>
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
